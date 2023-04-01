@@ -62,3 +62,8 @@ def signin(request):
             return redirect('signin')
     else:
         return render(request, 'signin.html')
+
+def logout(request):
+    auth.logout(request)
+    # TODO redirect to non auth index
+    return redirect('signin')
