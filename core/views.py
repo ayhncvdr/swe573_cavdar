@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile
 
 # Create your views here.
+
+
 @login_required(login_url='signin')
 def index(request):
     return render(request, 'index.html')
@@ -42,7 +44,7 @@ def signup(request):
                                                      last_name=user_model.last_name, username=user_model.username, email=user_model.email, password=user_model.password)
                 new_profile.save()
                 # TODO redirect setting page later
-                return redirect('index')
+                return redirect('settings')
         else:
             messages.info(request, 'Passwords do not match')
             return redirect('signup')
@@ -66,8 +68,41 @@ def signin(request):
     else:
         return render(request, 'signin.html')
 
+
 @login_required(login_url='signin')
 def logout(request):
     auth.logout(request)
     # TODO design sign in as non auth user page + login
     return redirect('signin')
+
+
+@login_required(login_url='signin')
+def settings(request):
+    user_profile = Profile.objects.get(user=request.user)
+    if request.method == 'POST':
+        if request.FILES.get('image') == None:
+            image = user_profile.profile_image
+            bio = request.POST['bio']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+
+            user_profile.profile_image = image
+            user_profile.bio = bio
+            user_profile.first_name = first_name
+            user_profile.last_name = last_name
+            user_profile.save()
+        else:
+            image = request.FILES.get('image')
+            bio = request.POST['bio']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+
+            user_profile.profile_image = image
+            user_profile.bio = bio
+            user_profile.first_name = first_name
+            user_profile.last_name = last_name
+            user_profile.save()
+
+        return redirect('index')
+
+    return render(request, 'settings.html', {'user_profile': user_profile})
