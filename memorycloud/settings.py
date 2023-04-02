@@ -14,6 +14,16 @@ from pathlib import Path
 from decouple import config
 import os
 
+if os.name == 'nt':
+    import platform
+    OSGEO4W = "C:/OSGeo4W"
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = "C:/OSGeo4W/apps/gdal"
+    os.environ['PROJ_LIB'] = OSGEO4W + "/share/proj"
+    GDAL_LIBRARY_PATH = "C:/OSGeo4W/bin/gdal306.dll"
+    os.environ['PATH'] = OSGEO4W + "/bin/" + os.environ['PATH']
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
