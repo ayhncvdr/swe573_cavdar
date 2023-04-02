@@ -1,0 +1,194 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'assets/images/favicon.png' %}" rel="icon" type="image/png">
+    <title>Settings</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+
+    <!-- leaflet js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <!-- leaflet draw plugin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+
+    <style>
+        #map {
+            position: relative;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container m-auto ">
+
+        <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-3" style="text-align: center;"> New Post</h1>
+        <br>
+        <hr>
+        <div>
+            <div class="lg:grid-cols-3 mt-12" style="margin-left: 15%; margin-right: 15%;">
+
+                <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
+
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
+
+                            <div class="col-span-2">
+                                <label for="">Title</label>
+                                <input type="text" name="title" placeholder="Title" value=""
+                                    class="shadow-none bg-gray-100">
+                            </div>
+                            <div class="col-span-2">
+                                <label for="">Tag</label>
+                                <input type="text" name="tag" placeholder="Tag" value=""
+                                    class="shadow-none bg-gray-100">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label for="">Images</label>
+                                <img width="100" height="100" src="" />
+                                <input type="file" name="images" value="" class="shadow-none bg-gray-100 mt-3">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label for="">Location</label>
+                                <div id="map" style="height: 500px;">
+                                    <script>
+                                        var map = L.map('map').setView([0, 0], 1);
+                                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+                                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+                                        }).addTo(map);
+                                        // point selection
+                                        /*   map.on('click', function (e) { // Add a click event listener to the map
+                                              marker.setLatLng(e.latlng); // Move the marker to the clicked location
+                                          }); */
+
+                                        var drawnFeatures = new L.FeatureGroup();
+                                        map.addLayer(drawnFeatures);
+
+                                        var drawControl = new L.Control.Draw({
+                                            edit: {
+                                                featureGroup: drawnFeatures,
+                                                remove: false
+                                            },
+                                            draw: {
+                                                polygon: {
+                                                    shapeOptions: {
+                                                        color: 'red'
+                                                    },
+
+                                                    drawError: {
+                                                        color: 'red',
+                                                        timeout: 1000
+                                                    },
+                                                },
+                                                polyline: {
+                                                    shapeOptions: {
+                                                        color: 'red'
+                                                    },
+                                                },
+                                                rectangle: {
+                                                    shapeOptions: {
+                                                        color: 'red'
+                                                    },
+                                                },
+                                                circle: {
+                                                    shapeOptions: {
+                                                        color: 'red'
+                                                    },
+                                                },
+                                            },
+                                        });
+                                        map.addControl(drawControl);
+
+                                        map.on("draw:created", function (e) {
+                                            var type = e.layerType;
+                                            var layer = e.layer;
+                                            console.log(e.layerType);
+
+                                            console.log(layer.toGeoJSON());
+                                            layer.bindPopup('<p>' + JSON.stringify(layer.toGeoJSON()) + '</p>');
+                                            drawnFeatures.addLayer(layer);
+                                        });
+
+                                        map.on("draw:edited", function (e) {
+                                            var layers = e.layers;
+                                            layers.eachLayer(function (layer) {
+                                                console.log(layer)
+                                                console.log(layer.toGeoJSON());
+                                            })
+
+                                        });
+
+                                        map.on("draw:deleted", function (e) {
+                                            var layers = e.layers;
+                                            layers.eachLayer(function (layer) {
+                                                console.log(layer)
+                                                console.log(layer.toGeoJSON());
+                                            })
+                                        });
+
+                                    </script>
+
+                                </div>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="about">Content</label>
+                                <textarea id="content" name="content" rows="20"
+                                    class="shadow-none bg-gray-100"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-10 p-6 pt-0 flex justify-end space-x-3">
+                            <button class="p-2 px-4 rounded bg-gray-50 text-red-500"> <a href="/">Cancel</a> </button>
+                            <button type="submit" class="button bg-blue-700"> Save </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <br>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+
+
+    <!-- Scripts
+    ================================================== -->
+    <script src="{% static 'assets/js/tippy.all.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/uikit.js' %}"></script>
+    <script src="{% static 'assets/js/simplebar.js' %}"></script>
+    <script src="{% static 'assets/js/custom.js' %}"></script>
+
+</body>
+
+</html>

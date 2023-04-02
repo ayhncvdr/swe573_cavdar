@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
@@ -106,3 +107,6 @@ def settings(request):
         return redirect('index')
 
     return render(request, 'settings.html', {'user_profile': user_profile})
+
+def newPost(request):
+    return render(request, 'newpost.html')
