@@ -32,7 +32,8 @@ class Location(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=255)
     point = models.PointField(blank=True, null=True)
-    area = models.MultiPolygonField(blank=True, null=True)
+    area = models.PolygonField(blank=True, null=True)
+    lines= models.LineStringField(blank=True, null=True)
 
     def __str__(self):
         return self.name 
@@ -57,7 +58,7 @@ class Story(models.Model):
     decade= models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag, blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    image= models.ImageField(upload_to='story_images', blank=True)
+    image= models.FileField(upload_to='story_images', blank=True)
 
     def __str__(self):
         return self.title
@@ -75,16 +76,14 @@ class Story(models.Model):
         return self.location
 
 class Like(models.Model):
-    post_id = models.CharField(max_length=500)
-    username = models.CharField(max_length=100)
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.username
 
 class Comment(models.Model):
-    post_id = models.CharField(max_length=500)
-    username = models.CharField(max_length=100)
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
     content=models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
