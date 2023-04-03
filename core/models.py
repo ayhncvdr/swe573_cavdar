@@ -34,6 +34,7 @@ class Location(models.Model):
     point = models.PointField(blank=True, null=True)
     area = models.PolygonField(blank=True, null=True)
     lines= models.LineStringField(blank=True, null=True)
+    radius = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.name 

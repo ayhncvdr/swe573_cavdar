@@ -127,6 +127,11 @@
                                             var layer = e.layer;
                                             console.log(e.layerType);
 
+                                            if (type === 'circle') {
+                                                // Get the radius of the circle
+                                                var radius = layer.getRadius();
+                                                console.log(radius);
+                                            }
                                             console.log(layer.toGeoJSON());
                                             layer.bindPopup('<p>' + JSON.stringify(layer.toGeoJSON()) + '</p>');
                                             drawnFeatures.addLayer(layer);
