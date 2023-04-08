@@ -46,11 +46,12 @@
         <br>
         <hr>
         <div>
-            <div class="lg:grid-cols-3 mt-12" style="margin-left: 15%; margin-right: 15%;">
+            <div class="lg:grid-cols-3 mt-12" style="margin-left: 5%; margin-right: 5%;">
 
                 <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
 
-                    <form action="" method="POST" enctype="multipart/form-data">
+                    <form action="" method="POST" enctype="multipart/form-data"
+                        onkeydown="return event.key != 'Enter';">
                         {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
 
@@ -59,15 +60,93 @@
                                 <input type="text" name="title" placeholder="Title" value=""
                                     class="shadow-none bg-gray-100">
                             </div>
+
                             <div class="col-span-2">
-                                <label for="">Tag</label>
-                                <input type="text" name="tag" placeholder="Tag" value=""
+                                <div style="display: grid; grid-template-columns: auto 1fr; gap:10px ;"
                                     class="shadow-none bg-gray-100">
+                                    <label for="date-option">Select a date format
+                                        option:</label>
+                                    <select id="date-option" name="date-option"
+                                        style="width: min-content; height: min-content;">
+                                        <option value="exact-date" selected>Exact Date</option>
+                                        <option value="date-range">Range of Dates</option>
+                                        <option value="decade">Decade</option>
+                                    </select>
+                                </div>
+                                <div id="exact-date" class="shadow-none bg-gray-100"
+                                    style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
+                                    <label>Exact date:</label>
+                                    <input type="date" name="exact-date"
+                                        style="width: min-content; height: min-content;">
+                                </div>
+                                <div id="date-range" class="shadow-none bg-gray-100"
+                                    style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
+                                    <label>Start date:</label>
+                                    <input type="date" name="start-date"
+                                        style="width: min-content; height: min-content;">
+                                    <label>End date:</label>
+                                    <input type="date" name="end-date" style="width: min-content; height: min-content;">
+                                </div>
+                                <div id="decade" class="shadow-none bg-gray-100"
+                                    style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
+                                    <label>Select decade:</label>
+                                    <select name="decade" style="width: min-content; height: min-content;">
+                                        <option value="1920s">1920s</option>
+                                        <option value="1930s">1930s</option>
+                                        <option value="1940s">1940s</option>
+                                        <option value="1940s">1950s</option>
+                                        <option value="1940s">1960s</option>
+                                        <option value="1940s">1970s</option>
+                                        <option value="1940s">1980s</option>
+                                        <option value="1940s">1990s</option>
+                                        <option value="1940s">2000s</option>
+                                        <option value="1940s">2010s</option>
+                                        <option value="2020s">2020s</option>
+                                    </select>
+                                </div>
                             </div>
+                            <script>
+                                const select = document.getElementById('date-option');
+                                const exactDateInput = document.getElementById('exact-date');
+                                const dateRangeInput = document.getElementById('date-range');
+                                const decadeInput = document.getElementById('decade');
+                                if (select.value == "exact-date") {
+                                    exactDateInput.style.display
+                                        = 'grid';
+                                }
+
+
+                                select.addEventListener('change', function () {
+                                    exactDateInput.style.display = 'none';
+                                    dateRangeInput.style.display = 'none';
+                                    decadeInput.style.display = 'none';
+                                    const selectedOption = select.value;
+                                    if (selectedOption === 'exact-date') {
+                                        exactDateInput.style.display
+                                            = 'grid';
+                                    } else if (selectedOption === 'date-range') {
+                                        dateRangeInput.style.display = 'grid';
+                                    } else if (selectedOption === 'decade') {
+                                        decadeInput.style.display = 'grid';
+                                    }
+                                });
+                            </script>
+
+                            <div class="col-span-2">
+                                <label for="">Tags</label>
+                                <input type="text" value="" data-role="tagsinput" placeholder="Add tags" />
+
+
+                            </div>
+
+
+
+
+
 
                             <div class="col-span-2">
                                 <label for="">Images</label>
-                                <img width="100" height="100" src="" />
+                                <!-- <img width="100" height="100" src="" /> -->
                                 <input type="file" name="images" value="" class="shadow-none bg-gray-100 mt-3">
                             </div>
 
@@ -128,7 +207,6 @@
                                             console.log(e.layerType);
 
                                             if (type === 'circle') {
-                                                // Get the radius of the circle
                                                 var radius = layer.getRadius();
                                                 console.log(radius);
                                             }
