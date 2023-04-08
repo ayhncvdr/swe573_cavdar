@@ -53,7 +53,7 @@
 
                 <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
 
-                    <form action="" method="POST" enctype="multipart/form-data"
+                    <form action="" method="POST" id="my-form" enctype="multipart/form-data"
                         onkeydown="return event.key != 'Enter';">
                         {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
@@ -67,28 +67,28 @@
                             <div class="col-span-2">
                                 <div style="display: grid; grid-template-columns: auto 1fr; gap:10px ;"
                                     class="shadow-none bg-gray-100">
-                                    <label for="date-option">Select a date format
+                                    <label for="date_option">Select a date format
                                         option:</label>
-                                    <select id="date-option" name="date-option"
+                                    <select id="date_option" name="date_option"
                                         style="width: min-content; height: min-content;">
-                                        <option value="exact-date" selected>Exact Date</option>
-                                        <option value="date-range">Range of Dates</option>
+                                        <option value="exact_date" selected>Exact Date</option>
+                                        <option value="date_range">Range of Dates</option>
                                         <option value="decade">Decade</option>
                                     </select>
                                 </div>
-                                <div id="exact-date" class="shadow-none bg-gray-100"
+                                <div id="exact_date" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Exact date:</label>
-                                    <input type="date" name="exact-date"
+                                    <input type="date" name="exact_date"
                                         style="width: min-content; height: min-content;">
                                 </div>
-                                <div id="date-range" class="shadow-none bg-gray-100"
+                                <div id="date_range" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Start date:</label>
-                                    <input type="date" name="start-date"
+                                    <input type="date" name="start_date"
                                         style="width: min-content; height: min-content;">
                                     <label>End date:</label>
-                                    <input type="date" name="end-date" style="width: min-content; height: min-content;">
+                                    <input type="date" name="end_date" style="width: min-content; height: min-content;">
                                 </div>
                                 <div id="decade" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
@@ -109,11 +109,11 @@
                                 </div>
                             </div>
                             <script>
-                                const select = document.getElementById('date-option');
-                                const exactDateInput = document.getElementById('exact-date');
-                                const dateRangeInput = document.getElementById('date-range');
+                                const select = document.getElementById('date_option');
+                                const exactDateInput = document.getElementById('exact_date');
+                                const dateRangeInput = document.getElementById('date_range');
                                 const decadeInput = document.getElementById('decade');
-                                if (select.value == "exact-date") {
+                                if (select.value == "exact_date") {
                                     exactDateInput.style.display
                                         = 'grid';
                                 }
@@ -124,10 +124,10 @@
                                     dateRangeInput.style.display = 'none';
                                     decadeInput.style.display = 'none';
                                     const selectedOption = select.value;
-                                    if (selectedOption === 'exact-date') {
+                                    if (selectedOption === 'exact_date') {
                                         exactDateInput.style.display
                                             = 'grid';
-                                    } else if (selectedOption === 'date-range') {
+                                    } else if (selectedOption === 'date_range') {
                                         dateRangeInput.style.display = 'grid';
                                     } else if (selectedOption === 'decade') {
                                         decadeInput.style.display = 'grid';
@@ -147,10 +147,18 @@
                                 <input type="file" name="images" value="" class="shadow-none bg-gray-100 mt-3">
                             </div>
 
+                            <input type="hidden" name="type" id="type">
+                            <input type="hidden" name="radius" id="radius">
+                            <input type="hidden" name="coordinates" id="coordinates">
+                            <input type="hidden" name="features" id="features">
+
+
+
                             <div class="col-span-2">
                                 <label for="">Location</label>
                                 <div id="map" style="height: 500px;">
                                     <script>
+
                                         var map = L.map('map').setView([0, 0], 1);
                                         L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
                                             attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
@@ -162,6 +170,7 @@
 
                                         var drawnFeatures = new L.FeatureGroup();
                                         map.addLayer(drawnFeatures);
+                                        var featureData = [];
 
                                         var drawControl = new L.Control.Draw({
                                             edit: {
@@ -171,29 +180,37 @@
                                             draw: {
                                                 polygon: {
                                                     shapeOptions: {
-                                                        color: 'red'
+                                                        color: 'red',
+                                                        repeatMode: false
                                                     },
 
                                                     drawError: {
                                                         color: 'red',
-                                                        timeout: 1000
+                                                        timeout: 1000,
+                                                        repeatMode: false
                                                     },
                                                 },
                                                 polyline: {
                                                     shapeOptions: {
-                                                        color: 'red'
+                                                        color: 'red',
+                                                        repeatMode: false
                                                     },
                                                 },
                                                 rectangle: {
                                                     shapeOptions: {
-                                                        color: 'red'
+                                                        color: 'red',
+                                                        repeatMode: false
                                                     },
                                                 },
                                                 circle: {
                                                     shapeOptions: {
-                                                        color: 'red'
+                                                        color: 'red',
+                                                        repeatMode: false
                                                     },
                                                 },
+                                                marker: {
+                                                    repeatMode: false
+                                                }
                                             },
                                         });
                                         map.addControl(drawControl);
@@ -203,13 +220,27 @@
                                             var layer = e.layer;
                                             console.log(e.layerType);
 
-                                            if (type === 'circle') {
+
+
+                                            if (type == 'circle') {
                                                 var radius = layer.getRadius();
                                                 console.log(radius);
+                                                document.getElementById("radius").value = radius;
                                             }
                                             console.log(layer.toGeoJSON());
                                             layer.bindPopup('<p>' + JSON.stringify(layer.toGeoJSON()) + '</p>');
+                                            var coordinates = JSON.stringify(layer.toGeoJSON().geometry.coordinates);
+                                            var locationType = JSON.stringify(layer.toGeoJSON().geometry.type);
+                                            document.getElementById("coordinates").value = coordinates;
+                                            document.getElementById("type").value = locationType.replace(/'/g, '');
                                             drawnFeatures.addLayer(layer);
+
+                                            var feature = layer.toGeoJSON();
+                                            featureData.push(feature);
+                                            var featureDataStr = JSON.stringify(featureData);
+
+                                            document.getElementById("features").value = featureDataStr;
+
                                         });
 
                                         map.on("draw:edited", function (e) {
@@ -242,7 +273,7 @@
 
                         <div class="bg-gray-10 p-6 pt-0 flex justify-end space-x-3">
                             <button class="p-2 px-4 rounded bg-gray-50 text-red-500"> <a href="/">Cancel</a> </button>
-                            <button type="submit" class="button bg-blue-700"> Save </button>
+                            <button type="submit" id="submit-button" class="button bg-blue-700"> Save </button>
                         </div>
                     </form>
 

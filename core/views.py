@@ -1,9 +1,13 @@
+import json
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Profile
+from .models import Profile, Tag
+from django.contrib.gis.geos import Point, Polygon, LineString
+from .models import Location
 
 # Create your views here.
 
@@ -108,5 +112,97 @@ def settings(request):
 
     return render(request, 'settings.html', {'user_profile': user_profile})
 
+
+@login_required(login_url='signin')
 def newPost(request):
+    DATE_FORMAT_MAPPING = {
+        'exact_date': 1,
+        'date_range': 2,
+        'decade': 3
+    }
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['content']
+        date_option = request.POST['date_option']
+        tags_str = request.POST.get('tags', '[]')
+        if tags_str:
+            tags_list = json.loads(tags_str)
+        else: 
+            tags_list=[]
+        images = request.FILES.get('images', None)
+        feature_data_str = request.POST.get('features', '[]')
+        if feature_data_str:
+            feature_data = json.loads(feature_data_str)
+        else:
+            feature_data = []
+
+        print(feature_data)
+        locations = []
+        for feature in feature_data:
+            if feature.get('geometry'):
+                location_type = feature['geometry']['type']
+                coordinates = feature['geometry']['coordinates']
+
+                if location_type == 'Point':
+                    point = Point(coordinates)
+                    name = f'Point ({coordinates[0]}, {coordinates[1]})'
+                    location = Location(name="test", point=point)
+
+                elif location_type == 'Polygon':
+                    polygon = Polygon(coordinates)
+                    name = f'Polygon ({len(coordinates[0])} points)'
+                    location = Location(name="test", area=polygon)
+
+                elif location_type == 'LineString':
+                    linestring = LineString(coordinates)
+                    name = f'LineString ({len(coordinates)} points)'
+                    location = Location(name="test", lines=linestring)
+
+                if location:
+                    radius = feature.get('properties', {}).get('radius')
+                    if radius:
+                        location.radius = float(radius)
+
+                    locations.append(location)
+        print(locations)
+
+        """ # Save all the location objects to the database
+        for location in locations:
+            location.save()
+
+        print(f'{len(locations)} locations saved to the database') """
+
+        date_format = DATE_FORMAT_MAPPING[date_option]
+        if date_format == 1:
+            date_exact = request.POST.get('exact_date', None)
+            date_range_start = None
+            date_range_end = None
+            decade = None
+        elif date_format == 2:
+            date_exact = None
+            date_range_start = request.POST.get('start_date', None)
+            date_range_end = request.POST.get('end_date', None)
+            decade = None
+        elif date_format == 3:
+            date_exact = None
+            date_range_start = None
+            date_range_end = None
+            decade = request.POST.get('decade', None)
+
+        tag_objs = []
+        for tag in tags_list:
+            tag_name = tag.get('value', None)
+            if tag_name:
+                tag_obj = Tag(name=tag_name)
+                tag_objs.append(tag_obj)
+
+        print(tag_objs)
+
+
+        """ for tag in tag_objs:
+            tag.save() """
+
+       
+
     return render(request, 'newpost.html')
