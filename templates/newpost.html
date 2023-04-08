@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
 
     <!-- leaflet js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -133,16 +136,10 @@
                             </script>
 
                             <div class="col-span-2">
-                                <label for="">Tags</label>
-                                <input type="text" value="" data-role="tagsinput" placeholder="Add tags" />
-
-
+                                <label for="tags">Tags</label>
+                                <input type="text" id="tags" name='tags' value='' placeholder="Add tags" />
+                                <ul id="tags-list"></ul>
                             </div>
-
-
-
-
-
 
                             <div class="col-span-2">
                                 <label for="">Images</label>
@@ -271,6 +268,16 @@
     <script src="{% static 'assets/js/uikit.js' %}"></script>
     <script src="{% static 'assets/js/simplebar.js' %}"></script>
     <script src="{% static 'assets/js/custom.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/@yaireo/tagify"></script>
+    <script src="https://unpkg.com/@yaireo/tagify@3.1.0/dist/tagify.polyfills.min.js"></script>
+    <script>
+        // The DOM element you wish to replace with Tagify
+        var input = document.querySelector('input[name=tags]');
+
+        // initialize Tagify on the above input node reference
+        new Tagify(input)
+    </script>
 
 </body>
 
