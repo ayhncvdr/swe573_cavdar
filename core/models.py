@@ -6,6 +6,8 @@ from django.contrib.gis.db import models
 User = get_user_model()
 
 # Create your models here.
+
+
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id_user = models.IntegerField()
@@ -20,7 +22,8 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
+
 class Tag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=255)
@@ -28,16 +31,25 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
 class Location(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=255)
     point = models.PointField(blank=True, null=True)
     area = models.PolygonField(blank=True, null=True)
-    lines= models.LineStringField(blank=True, null=True)
+    lines = models.LineStringField(blank=True, null=True)
     radius = models.FloatField(null=True, blank=True)
 
     def __str__(self):
-        return self.name 
+        return self.name
+
+
+class File(models.Model):
+    file = models.FileField(upload_to='files')
+
+    def __str__(self):
+        return self.file.name
+
 
 class Story(models.Model):
 
@@ -52,18 +64,18 @@ class Story(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    date_format= models.IntegerField(choices=DATE_FORMAT_CHOICES)
+    date_format = models.IntegerField(choices=DATE_FORMAT_CHOICES, default=1)
     date_exact = models.DateField(null=True, blank=True)
-    date_range_start= models.DateField(null=True, blank=True)
-    date_range_end= models.DateField(null=True, blank=True)
-    decade= models.CharField(max_length=100)
+    date_range_start = models.DateField(null=True, blank=True)
+    date_range_end = models.DateField(null=True, blank=True)
+    decade = models.CharField(max_length=100, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    image= models.FileField(upload_to='story_images', blank=True)
+    locations = models.ManyToManyField(Location)
+    files = models.ManyToManyField(File, blank=True)
 
     def __str__(self):
         return self.title
-    
+
     def get_comments(self):
         return self.comment_set.all()
 
@@ -72,30 +84,37 @@ class Story(models.Model):
 
     def get_tags(self):
         return self.tags.all()
-    
-    def get_location(self):
-        return self.location
+
+    def get_locations(self):
+        return self.locations.all()
+
+    def get_files(self):
+        return self.files.all()
+
 
 class Like(models.Model):
-    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.username
 
+
 class Comment(models.Model):
-    user= models.ForeignKey(User, on_delete=models.CASCADE)
-    content=models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
-
     def __str__(self):
         return self.username
 
+
 class Follower(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
-    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following")
+    follower = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followers")
 
     def __str__(self):
         return f"{self.follower.username} follows {self.user.username}"

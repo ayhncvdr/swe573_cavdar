@@ -53,7 +53,7 @@
 
                 <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
 
-                    <form action="" method="POST" id="my-form" enctype="multipart/form-data"
+                    <form action="/newpost" method="POST" id="my-form" enctype="multipart/form-data"
                         onkeydown="return event.key != 'Enter';">
                         {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
@@ -80,20 +80,20 @@
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Exact date:</label>
                                     <input type="date" name="exact_date"
-                                        style="width: min-content; height: min-content;">
+                                        style="width: min-content; height:75%;">
                                 </div>
                                 <div id="date_range" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Start date:</label>
                                     <input type="date" name="start_date"
-                                        style="width: min-content; height: min-content;">
+                                        style="width: min-content; height:75%;">
                                     <label>End date:</label>
-                                    <input type="date" name="end_date" style="width: min-content; height: min-content;">
+                                    <input type="date" name="end_date" style="width: min-content; height:75%;">
                                 </div>
                                 <div id="decade" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Select decade:</label>
-                                    <select name="decade" style="width: min-content; height: min-content;">
+                                    <select name="decade" style="width: min-content; height:75%;">
                                         <option value="1920s">1920s</option>
                                         <option value="1930s">1930s</option>
                                         <option value="1940s">1940s</option>
@@ -142,9 +142,9 @@
                             </div>
 
                             <div class="col-span-2">
-                                <label for="">Images</label>
+                                <label for="">Files</label>
                                 <!-- <img width="100" height="100" src="" /> -->
-                                <input type="file" name="images" value="" class="shadow-none bg-gray-100 mt-3">
+                                <input type="file" name="files" value="" multiple class="shadow-none bg-gray-100 mt-3">
                             </div>
 
                             <input type="hidden" name="type" id="type">
