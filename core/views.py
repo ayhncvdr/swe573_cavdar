@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Tag
+from .models import File, Profile, Story, Tag
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 
@@ -122,15 +122,16 @@ def newPost(request):
     }
 
     if request.method == 'POST':
+        user = request.user
         title = request.POST['title']
         content = request.POST['content']
         date_option = request.POST['date_option']
         tags_str = request.POST.get('tags', '[]')
         if tags_str:
             tags_list = json.loads(tags_str)
-        else: 
-            tags_list=[]
-        images = request.FILES.get('images', None)
+        else:
+            tags_list = []
+        files = request.FILES.getlist('files', None)
         feature_data_str = request.POST.get('features', '[]')
         if feature_data_str:
             feature_data = json.loads(feature_data_str)
@@ -150,7 +151,7 @@ def newPost(request):
                     location = Location(name="test", point=point)
 
                 elif location_type == 'Polygon':
-                    polygon = Polygon(coordinates)
+                    polygon = Polygon(coordinates[0])
                     name = f'Polygon ({len(coordinates[0])} points)'
                     location = Location(name="test", area=polygon)
 
@@ -167,12 +168,7 @@ def newPost(request):
                     locations.append(location)
         print(locations)
 
-        """ # Save all the location objects to the database
-        for location in locations:
-            location.save()
-
-        print(f'{len(locations)} locations saved to the database') """
-
+        # date
         date_format = DATE_FORMAT_MAPPING[date_option]
         if date_format == 1:
             date_exact = request.POST.get('exact_date', None)
@@ -190,6 +186,7 @@ def newPost(request):
             date_range_end = None
             decade = request.POST.get('decade', None)
 
+        # tags
         tag_objs = []
         for tag in tags_list:
             tag_name = tag.get('value', None)
@@ -197,12 +194,45 @@ def newPost(request):
                 tag_obj = Tag(name=tag_name)
                 tag_objs.append(tag_obj)
 
+        # file_objs
+        file_objs = []
+        for file in files:
+            file_obj= File(file=file)
+            file_objs.append(file_obj)
+                
+
+        print(file_objs)
         print(tag_objs)
 
+        # Save all the Location objects to the database
+        for location in locations:
+            location.save()
 
-        """ for tag in tag_objs:
-            tag.save() """
+        # Save all the Tag objects to the database
+        for tag in tag_objs:
+            tag.save()
 
-       
+        # Save all the File objects to the database
+        for file in file_objs:
+            file.save()
+
+        story = Story(
+            user=user,
+            title=title,
+            content=content,
+            date_format=date_format,
+            date_exact=date_exact,
+            date_range_start=date_range_start,
+            date_range_end=date_range_end,
+            decade=decade
+        )
+
+        print(story)
+        # Save the story object to the database
+        story.save()
+        story.locations.set(locations)
+        story.tags.set(tag_objs)
+        story.files.set(file_objs)
+        print(story)
 
     return render(request, 'newpost.html')
