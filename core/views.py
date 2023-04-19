@@ -1,4 +1,6 @@
 import json
+import os
+import geojson
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -8,7 +10,12 @@ from django.contrib.auth.decorators import login_required
 from .models import File, Profile, Story, Tag
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
+from opencage.geocoder import OpenCageGeocode
+from dotenv import load_dotenv
 
+load_dotenv()
+opencage_api_key = os.environ.get("OPENCAGE_API_KEY")
+geocoder = OpenCageGeocode(opencage_api_key)
 # Create your views here.
 
 
@@ -147,18 +154,31 @@ def newPost(request):
 
                 if location_type == 'Point':
                     point = Point(coordinates)
-                    name = f'Point ({coordinates[0]}, {coordinates[1]})'
-                    location = Location(name="test", point=point)
+                    results = geocoder.reverse_geocode(point.y, point.x)
+                    location_name = results[0]['formatted']
+                    location_name = location_name.replace("unnamed road,", "")
+                    print(location_name)
+                    location = Location(name=location_name, point=point)
 
                 elif location_type == 'Polygon':
                     polygon = Polygon(coordinates[0])
-                    name = f'Polygon ({len(coordinates[0])} points)'
-                    location = Location(name="test", area=polygon)
+                    centroid = polygon.centroid
+                    results = geocoder.reverse_geocode(centroid.y, centroid.x)
+                    location_name = results[0]['formatted']
+                    location_name = location_name.replace("unnamed road,", "")
+                    print(location_name)
+                    location = Location(
+                        name="Around "+location_name, area=polygon)
 
                 elif location_type == 'LineString':
                     linestring = LineString(coordinates)
-                    name = f'LineString ({len(coordinates)} points)'
-                    location = Location(name="test", lines=linestring)
+                    midpoint = linestring.interpolate(linestring.length/2)
+                    results = geocoder.reverse_geocode(midpoint.y, midpoint.x)
+                    location_name = results[0]['formatted']
+                    location_name = location_name.replace("unnamed road,", "")
+                    print(location_name)
+                    location = Location(
+                        name="Around "+location_name, lines=linestring)
 
                 if location:
                     radius = feature.get('properties', {}).get('radius')
@@ -197,9 +217,8 @@ def newPost(request):
         # file_objs
         file_objs = []
         for file in files:
-            file_obj= File(file=file)
+            file_obj = File(file=file)
             file_objs.append(file_obj)
-                
 
         print(file_objs)
         print(tag_objs)

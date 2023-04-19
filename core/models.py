@@ -36,7 +36,7 @@ class Location(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=255)
     point = models.PointField(blank=True, null=True)
-    area = models.PolygonField(blank=True, null=True)
+    area = models.PolygonField(null=True, geography=True, blank=True)
     lines = models.LineStringField(blank=True, null=True)
     radius = models.FloatField(null=True, blank=True)
 
