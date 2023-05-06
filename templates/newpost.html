@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'assets/images/favicon.png' %}" rel="icon" type="image/png">
-    <title>Settings</title>
+    <title>New Post</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
@@ -27,6 +27,12 @@
     <!-- leaflet draw plugin -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/@geoapify/leaflet-address-search-plugin@^1/dist/L.Control.GeoapifyAddressSearch.min.css" />
+    <script
+        src="https://unpkg.com/@geoapify/leaflet-address-search-plugin@^1/dist/L.Control.GeoapifyAddressSearch.min.js"></script>
+
 
 
     <style>
@@ -79,14 +85,12 @@
                                 <div id="exact_date" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Exact date:</label>
-                                    <input type="date" name="exact_date"
-                                        style="width: min-content; height:75%;">
+                                    <input type="date" name="exact_date" style="width: min-content; height:75%;">
                                 </div>
                                 <div id="date_range" class="shadow-none bg-gray-100"
                                     style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
                                     <label>Start date:</label>
-                                    <input type="date" name="start_date"
-                                        style="width: min-content; height:75%;">
+                                    <input type="date" name="start_date" style="width: min-content; height:75%;">
                                     <label>End date:</label>
                                     <input type="date" name="end_date" style="width: min-content; height:75%;">
                                 </div>
@@ -158,15 +162,42 @@
                                 <label for="">Location</label>
                                 <div id="map" style="height: 500px;">
                                     <script>
-
                                         var map = L.map('map').setView([0, 0], 1);
+                                        var marker = null;
+                                        var myAPIKey = "{{ myAPIKey }}";
                                         L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
-                                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+
+                                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                                            apiKey: myAPIKey
+
                                         }).addTo(map);
-                                        // point selection
-                                        /*   map.on('click', function (e) { // Add a click event listener to the map
-                                              marker.setLatLng(e.latlng); // Move the marker to the clicked location
-                                          }); */
+
+
+                                        // Add Geoapify Address Search control
+                                        const addressSearchControl = L.control.addressSearch(myAPIKey, {
+                                            position: 'topright',
+                                            resultCallback: (address) => {
+                                                if (marker) {
+                                                    marker.remove();
+                                                }
+
+                                                if (!address) {
+                                                    return;
+                                                }
+
+                                                marker = L.marker([address.lat, address.lon]).addTo(map);
+
+                                                if (address.bbox && address.bbox.lat1 !== address.bbox.lat2 && address.bbox.lon1 !== address.bbox.lon2) {
+                                                    map.fitBounds([[address.bbox.lat1, address.bbox.lon1], [address.bbox.lat2, address.bbox.lon2]], { padding: [100, 100] })
+                                                } else {
+                                                    map.setView([address.lat, address.lon], 15);
+                                                }
+                                            },
+                                            suggestionsCallback: (suggestions) => {
+                                                console.log(suggestions);
+                                            }
+                                        });
+                                        map.addControl(addressSearchControl);
 
                                         var drawnFeatures = new L.FeatureGroup();
                                         map.addLayer(drawnFeatures);
