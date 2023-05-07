@@ -21,7 +21,16 @@ geocoder = OpenCageGeocode(opencage_api_key)
 
 @login_required(login_url='signin')
 def index(request):
-    return render(request, 'index.html')
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+
+    stories = Story.objects.exclude(user=user_object).order_by('-created_at')
+    context = {
+        'stories': stories,
+        'user_profile': user_profile
+    }
+    return render(request, 'index.html', context)
+
 
 
 def signup(request):
@@ -178,7 +187,7 @@ def newPost(request):
                     location_name = location_name.replace("unnamed road,", "")
                     print(location_name)
                     location = Location(
-                        name="Around "+location_name, lines=linestring)
+                        name="Area Around "+location_name, lines=linestring)
 
                 if location:
                     radius = feature.get('properties', {}).get('radius')
