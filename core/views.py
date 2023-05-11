@@ -25,11 +25,26 @@ def index(request):
     user_profile = Profile.objects.get(user=user_object)
 
     stories = Story.objects.exclude(user=user_object).order_by('-created_at')
+
+    # Create a list to store tuples of story and profile
+    story_profile_list = []
+
+    # Iterate over each story and fetch the profile object
+    for story in stories:
+        user_story_object = User.objects.get(username=story.user.username)
+        try:
+            user_story_profile = Profile.objects.get(user=user_story_object)
+        except Profile.DoesNotExist:
+            user_story_profile = None
+
+        story_profile_list.append((story, user_story_profile))
+
     context = {
-        'stories': stories,
+        'story_profile_list': story_profile_list,
         'user_profile': user_profile
     }
     return render(request, 'index.html', context)
+
 
 
 
