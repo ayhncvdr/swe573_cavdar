@@ -61,8 +61,20 @@
 
                     <form action="/newpost" method="POST" id="my-form" enctype="multipart/form-data"
                         onkeydown="return event.key != 'Enter';">
+                       
                         {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
+                            <div class="col-span-2">
+                                <style>
+                                    h6 {
+                                        color: red;
+                                    }
+                                </style>
+                                {% for message in messages %}
+                                <h6>*{{message}}</h6>
+                                {% endfor %}
+                            </div>
+
 
                             <div class="col-span-2">
                                 <label for="">Title</label>
@@ -148,7 +160,8 @@
                             <div class="col-span-2">
                                 <label for="">Files</label>
                                 <!-- <img width="100" height="100" src="" /> -->
-                                <input type="file" name="files" value="" accept="image/*" multiple class="shadow-none bg-gray-100 mt-3">
+                                <input type="file" name="files" value="" accept="image/*" multiple
+                                    class="shadow-none bg-gray-100 mt-3">
                             </div>
 
                             <input type="hidden" name="type" id="type">

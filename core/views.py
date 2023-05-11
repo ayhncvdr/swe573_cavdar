@@ -246,6 +246,38 @@ def newPost(request):
             date_range_end = None
             decade = request.POST.get('decade', None)
 
+        # Validation checks
+        if not content:
+            messages.error(request, 'Content is required.')
+            return redirect('newpost')
+
+        if not title:
+            messages.error(request, 'Title is required.')
+            return redirect('newpost')
+
+        if not locations:
+            messages.error(request, 'At least one location is required.')
+            return redirect('newpost')
+
+        if date_format== 1:
+            if not date_exact:
+                messages.error(request, 'Exact date is required.')
+                return redirect('newpost')
+           
+        elif date_format == 2:
+            if not date_range_start or not date_range_end:
+                messages.error(request, 'Start date and end date are required.')
+                return redirect('newpost')
+            
+        elif date_format == 3:
+            if not decade:
+                messages.error(request, 'Decade is required.')
+                return redirect('newpost')
+        else:
+            messages.error(request, 'Invalid date option.')
+            return redirect('newpost')
+
+
         # tags
         tag_objs = []
         for tag in tags_list:
