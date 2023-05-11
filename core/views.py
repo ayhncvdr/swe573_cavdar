@@ -46,21 +46,22 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-@login_required(login_url='signin')
 def postDetailed(request):
     story_id = request.GET.get('story_id')
     profile_id = request.GET.get('profile_id')
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
 
     try:
         story = Story.objects.get(id=story_id)
         profile = Profile.objects.get(id=profile_id) if profile_id else None
-        # Perform any additional processing or logic with the story and profile objects
-        return render(request, 'postdetailed.html', {'story': story, 'profile': profile})
+        return render(request, 'postdetailed.html', {'story': story, 'profile': profile, 'user_profile': user_profile})
     except Story.DoesNotExist:
-        return HttpResponse("Story not found")
+        return HttpResponse(story_id)
     except Profile.DoesNotExist:
         return HttpResponse("Profile not found")
-
+    except User.DoesNotExist:
+        return HttpResponse("User not found")
 
 
 def signup(request):
@@ -292,5 +293,6 @@ def newPost(request):
         story.tags.set(tag_objs)
         story.files.set(file_objs)
         print(story)
+        return redirect('index')
 
     return render(request, 'newpost.html')

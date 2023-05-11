@@ -1,11 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Post Detailed</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'favicon.png' %}" rel="icon" type="image/png">
+    <title>Post Details</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        .tag-container {
+            display: flex;
+        }
+
+        .tag {
+            border-radius: 8px;
+            padding: 4px 8px;
+            color: white;
+            font-weight: normal;
+            margin-right: 8px;
+        }
+    </style>
+
 </head>
 
 <body>
+        <header>
+        <div class="header_inner">
+            <div class="left-side">
+                <a href="" style="font-style: italic; font-weight: bold; font-size: large;"> Memorycloud</a>
+
+            </div>
+
+            <div class="right-side lg:pr-4">
+                <!-- upload -->
+                <a href="/newpost"
+                    class="bg-pink-500 flex font-bold hover:bg-pink-600 hover:text-white inline-block items-center max-h-10 mr-4 px-4 py-2 rounded shadow text-white">
+                    <ion-icon name="add-circle" class="-mb-1 mr-1 opacity-90 text-xl uilus-circle"></ion-icon> New Story
+                </a>
+
+                <a href="#">
+                    <img src="{{user_profile.profile_image.url|slice:'1:'}}" class="header-avatar" alt="">
+                </a>
+                <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
+                    <ul>
+                        <li><a href="/settings"> Account setting </a> </li>
+                        <li><a href="logout"> Log Out</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
 
     <h1>Post Detailed</h1>
 
