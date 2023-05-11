@@ -168,149 +168,160 @@
                 <!-- post 1-->
 
                 {% for story, profile in story_profile_list %}
-                <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
+                <a href="/postdetailed">
+                    <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
 
+                        <!-- post header-->
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-2">
+                                <a href="#">
+                                    <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                        {% if profile.profile_image.url %}
+                                        <img src="{{ profile.profile_image.url }}"
+                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                        {% else %}
+                                        <img src="/media/blank-profile-picture.png"
+                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                        {% endif %}
+                                    </div>
+                                </a>
 
-                    <!-- post header-->
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-2">
-                            <a href="#">
-                                <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
-                                    {% if profile.profile_image.url %}
-                                    <img src="{{ profile.profile_image.url }}"
-                                        class="bg-gray-200 border border-white rounded-full w-8 h-8">
-                                    {% else %}
-                                    <img src="/media/blank-profile-picture.png"
-                                        class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                <span class="block font-semibold"><a
+                                        href="/profile/{{story.user}}">{{story.user}}</a></span>
+                            </div>
+                        </div>
+                        <hr
+                            style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    <span style="font-weight: 600;">Title:</span> {{ story.title}}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    <span style="font-weight: 600;">Timeframe:</span>
+                                    {% if story.date_format == 1 %}
+                                    {{ story.date_exact }}
+                                    {% elif story.date_format == 2 %}
+                                    {{ story.date_range_start }} - {{ story.date_range_end }}
+                                    {% elif story.date_format == 3 %}
+                                    {{ story.decade }}
                                     {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    {% if story.locations.count > 2 %}
+                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                                    and
+                                    {{ story.locations.count|add:"-1" }} other locations
+                                    {% else %}
+                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:", " }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <span style="font-weight: 600;">Tags:</span>
+                                <div class="tag-container">
+                                    {% for tag in story.tags.all %}
+                                    <div class="tag" style="background-color: grey">
+                                        <p style="color: white;">{{ tag.name }}</p>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                            </a>
+                            </div>
+                        </div>
 
-                            <span class="block font-semibold"><a
-                                    href="/profile/{{story.user}}">{{story.user}}</a></span>
-                        </div>
-                    </div>
-                    <hr
-                        style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <p style="word-break: break-all; white-space: normal;">
-                                <span style="font-weight: 600;">Title:</span> {{ story.title}}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <p style="word-break: break-all; white-space: normal;">
-                                <span style="font-weight: 600;">Timeframe:</span>
-                                {% if story.date_format == 1 %}
-                                {{ story.date_exact }}
-                                {% elif story.date_format == 2 %}
-                                {{ story.date_range_start }} - {{ story.date_range_end }}
-                                {% elif story.date_format == 3 %}
-                                {{ story.decade }}
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <p style="word-break: break-all; white-space: normal;">
-                                {% if story.locations.count > 2 %}
-                                <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }}, and
-                                {{ story.locations.count|add:"-1" }} other locations
-                                {% else %}
-                                <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:", " }}
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <span style="font-weight: 600;">Tags:</span>
-                            <div class="tag-container">
-                                {% for tag in story.tags.all %}
-                                <div class="tag" style="background-color: grey">
-                                    <p style="color: white;">{{ tag.name }}</p>
+                        <a href="/postdetailed">
+                            <div class="flex justify-between items-center px-4 py-1">
+                                <div class="flex flex-1 items-center space-x-4">
+                                    <p style="word-break: break-all; white-space: normal;">
+                                        <span style="font-weight: 600;">Content:</span>
+                                        {{ story.content|truncatechars:500 }}
+                                    </p>
                                 </div>
+                            </div>
+                        </a>
+
+                        {% if story.files.all %}
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <span style="font-weight: 600;">Images:</span>
+                            </div>
+                        </div>
+                        <div uk-lightbox class="flex justify-between items-center px-4 py-1">
+                            <div style="display: flex; gap: 10px;">
+                                {% for file in story.files.all %}
+                                <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
+                                        <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
+                                    </a>
+                                </p>
                                 {% endfor %}
                             </div>
                         </div>
-                    </div>
-
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <p style="word-break: break-all; white-space: normal;">
-                                <span style="font-weight: 600;">Content:</span>
-                                {{ story.content|truncatechars:500 }}
-                            </p>
-                        </div>
-                    </div>
-
-
-                    {% if story.files.all %}
-                    <div class="flex justify-between items-center px-4 py-1">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <span style="font-weight: 600;">Images:</span>
-                        </div>
-                    </div>
-                    <div uk-lightbox class="flex justify-between items-center px-4 py-1">
-                        <div style="display: flex; gap: 10px;">
-                            {% for file in story.files.all %}
-                            <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
-                                    <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
-                                </a>
-                            </p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
+                        {% endif %}
 
 
 
-                    <div class="py-3 px-4 space-y-3">
+                        <div class="py-3 px-4 space-y-3">
 
-                        <div class="flex space-x-4 lg:font-bold">
-                            <a href="/like-story?story_id={{story.id}}" class="flex items-center space-x-2">
-                                <div class="p-2 rounded-full text-black">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        width="25" height="25" class="">
-                                        <path
-                                            d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                    </svg>
-                                    <p>10</p>
-                                    <!-- CHECK HERE -->
-                                    <!-- {% if story.no_of_likes == 0 %}
+                            <div class="flex space-x-4 lg:font-bold">
+                                <a href="/like-story?story_id={{story.id}}" class="flex items-center space-x-2">
+                                    <div class="p-2 rounded-full text-black">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            width="25" height="25" class="">
+                                            <path
+                                                d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                        </svg>
+                                        <p>10</p>
+                                        <!-- CHECK HERE -->
+                                        <!-- {% if story.no_of_likes == 0 %}
                                     <p>No likes</p>
                                     {% elif story.no_of_likes == 1 %}
                                     <p>Liked by {{story.no_of_likes}} person</p>
                                     {% else %}
                                     <p>Liked by {{story.no_of_likes}} people</p>
                                     {% endif %} -->
-                                </div>
+                                    </div>
 
-                            </a>
-                            <a href="#" class="flex items-center space-x-2">
-                                <div class="p-2 rounded-full text-black">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        width="25" height="25" class="">
-                                        <path fill-rule="evenodd"
-                                            d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <p>10</p>
-                                </div>
+                                </a>
+                                <a href="#" class="flex items-center space-x-2">
+                                    <div class="p-2 rounded-full text-black">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            width="25" height="25" class="">
+                                            <path fill-rule="evenodd"
+                                                d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <p>10</p>
+                                    </div>
 
-                            </a>
+                                </a>
 
-                            <a href="#" class="flex items-center space-x-2 flex-1 justify-end">
-                                <p style="font-weight: 600;">See Details &rarr;</p>
-                            </a>
+                                {% if profile %}
+                                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                                    class="flex items-center space-x-2 flex-1 justify-end">
+                                    <p style="font-weight: 600;">See Details &rarr;</p>
+                                </a>
+                                {% else %}
+                                <a href="/postdetailed?story_id={{ story.id }}"
+                                    class="flex items-center space-x-2 flex-1 justify-end">
+                                    <p style="font-weight: 600;">See Details &rarr;</p>
+                                </a>
+                                {% endif %}
 
-                        </div>
-                        <!-- <div class="flex items-center space-x-3"> 
+
+                            </div>
+                            <!-- <div class="flex items-center space-x-3"> 
                                      <div class="flex items-center">
                                          <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white ">
                                          <img src="{% static 'assets/images/avatars/avatar-4.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
@@ -321,7 +332,7 @@
                                      </div>
                                  </div> -->
 
-                        <!-- <div class="border-t pt-4 space-y-4 ">
+                            <!-- <div class="border-t pt-4 space-y-4 ">
                                      <div class="flex">
                                          <div class="w-10 h-10 rounded-full relative flex-shrink-0">
                                              <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="absolute h-full rounded-full w-full">
@@ -344,7 +355,7 @@
                                      </div>
                                  </div> -->
 
-                        <!-- <div class="bg-gray-100 bg-gray-100 rounded-full rounded-md relative ">
+                            <!-- <div class="bg-gray-100 bg-gray-100 rounded-full rounded-md relative ">
                                      <input type="text" placeholder="post a comment" class="bg-transparent max-h-10 shadow-none">
                                      <div class="absolute bottom-0 flex h-full items-center right-0 right-3 text-xl space-x-2">
                                          <a href="#"> <i class="uil-image"></i></a>
@@ -352,9 +363,10 @@
                                      </div>
                                  </div> -->
 
-                    </div>
+                        </div>
 
-                </div>
+                    </div>
+                </a>
                 {% endfor %}
 
 

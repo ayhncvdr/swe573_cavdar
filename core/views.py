@@ -46,6 +46,21 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@login_required(login_url='signin')
+def postDetailed(request):
+    story_id = request.GET.get('story_id')
+    profile_id = request.GET.get('profile_id')
+
+    try:
+        story = Story.objects.get(id=story_id)
+        profile = Profile.objects.get(id=profile_id) if profile_id else None
+        # Perform any additional processing or logic with the story and profile objects
+        return render(request, 'postdetailed.html', {'story': story, 'profile': profile})
+    except Story.DoesNotExist:
+        return HttpResponse("Story not found")
+    except Profile.DoesNotExist:
+        return HttpResponse("Profile not found")
+
 
 
 def signup(request):
