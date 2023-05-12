@@ -326,7 +326,7 @@
 
                     </div>
                     <div class="flex space-x-4 lg:font-bold">
-                        <a href="">
+                        <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
                             {% if likes.count > 2 %}
                             <span style="font-weight: 600; color: #000;">{{likes.first.user.username}}, and {{
                                 likes.count|add:"-1" }} other users liked </span>
@@ -476,12 +476,12 @@
 
                         </a>
                         <div class="flex space-x-4 lg:font-bold">
-                            <a href="">
+                            <a href="/usersliked?story_id={{story.id}}">
                                 {% if likes.count > 2 %}
                                 <span style="font-weight: 600; color: #000;">{{likes.first.user.username}}, and {{
                                     likes.count|add:"-1" }} other users liked </span>
                                 {% elif likes.count > 0 %}
-                                <span style="font-weight: 600; color: #000;">{{likes.all|join:"; " }}</span>
+                                <span style="font-weight: 600; color: #000;">{{likes.all|join:" and " }}</span>
                                 {% else %}
                                 <span style="font-weight: 600; color: #000;">No likes</span>
                                 {% endif %}
