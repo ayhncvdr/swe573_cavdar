@@ -72,6 +72,9 @@ class Story(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     locations = models.ManyToManyField(Location)
     files = models.ManyToManyField(File, blank=True)
+    no_of_likes = models.IntegerField(default=0)
+    is_liked_by_current_user = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.title
@@ -97,7 +100,7 @@ class Like(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.username
+        return self.user.username
 
 
 class Comment(models.Model):
@@ -107,7 +110,7 @@ class Comment(models.Model):
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.username
+        return self.user.username
 
 
 class Follower(models.Model):

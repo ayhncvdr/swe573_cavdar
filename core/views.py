@@ -2,12 +2,12 @@ import json
 import os
 import geojson
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import File, Profile, Story, Tag
+from .models import File, Profile, Story, Tag, Like
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 from opencage.geocoder import OpenCageGeocode
@@ -41,11 +41,13 @@ def index(request):
 
     context = {
         'story_profile_list': story_profile_list,
-        'user_profile': user_profile
+        'user_profile': user_profile,
+        'user_object': user_object
     }
     return render(request, 'index.html', context)
 
 
+@login_required(login_url='signin')
 def postDetailed(request):
     story_id = request.GET.get('story_id')
     profile_id = request.GET.get('profile_id')
@@ -62,6 +64,37 @@ def postDetailed(request):
         return HttpResponse("Profile not found")
     except User.DoesNotExist:
         return HttpResponse("User not found")
+
+
+@login_required(login_url='signin')
+def like_post(request):
+    story_id = request.GET.get('story_id')
+    profile_id = request.GET.get('profile_id')
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+
+    if story_id:
+        story = Story.objects.get(id=story_id)
+        like_filter = Like.objects.filter(
+            story=story, user=user_object).first()
+        if like_filter is None:
+            new_like = Like.objects.create(story=story, user=user_object)
+            new_like.save()
+            story.no_of_likes += 1
+            story.is_liked_by_current_user = True
+            story.save()
+        else:
+            like_filter.delete()
+            story.no_of_likes -= 1
+            story.is_liked_by_current_user = False
+            story.save()
+
+    # Get the URL of the current page
+    current_page = request.META.get('HTTP_REFERER')
+    if current_page:
+        return HttpResponseRedirect(current_page)
+    else:
+        return redirect('/')
 
 
 def signup(request):
