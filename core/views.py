@@ -56,8 +56,9 @@ def postDetailed(request):
 
     try:
         story = Story.objects.get(id=story_id)
+        likes = Like.objects.filter(story=story)
         profile = Profile.objects.get(id=profile_id) if profile_id else None
-        return render(request, 'postdetailed.html', {'story': story, 'profile': profile, 'user_profile': user_profile})
+        return render(request, 'postdetailed.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'likes':likes})
     except Story.DoesNotExist:
         return HttpResponse(story_id)
     except Profile.DoesNotExist:
