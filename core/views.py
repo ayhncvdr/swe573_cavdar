@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import File, Profile, Story, Tag, Like
+from .models import File, Profile, Story, Tag, Like, Comment
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 from opencage.geocoder import OpenCageGeocode
@@ -32,6 +32,8 @@ def index(request):
     # Iterate over each story and fetch the profile object
     for story in stories:
         user_story_object = User.objects.get(username=story.user.username)
+        likes = Like.objects.filter(story=story)
+        comments= Comment.objects.filter(story=story)
         try:
             user_story_profile = Profile.objects.get(user=user_story_object)
         except Profile.DoesNotExist:
@@ -57,8 +59,9 @@ def postDetailed(request):
     try:
         story = Story.objects.get(id=story_id)
         likes = Like.objects.filter(story=story)
+        comments = Comment.objects.filter(story=story)
         profile = Profile.objects.get(id=profile_id) if profile_id else None
-        return render(request, 'postdetailed.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'likes': likes})
+        return render(request, 'postdetailed.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'likes': likes, 'comments': comments})
     except Story.DoesNotExist:
         return HttpResponse(story_id)
     except Profile.DoesNotExist:
@@ -89,9 +92,7 @@ def usersLiked(request):
 @login_required(login_url='signin')
 def like_post(request):
     story_id = request.GET.get('story_id')
-    profile_id = request.GET.get('profile_id')
     user_object = User.objects.get(username=request.user.username)
-    user_profile = Profile.objects.get(user=user_object)
 
     if story_id:
         story = Story.objects.get(id=story_id)
@@ -115,6 +116,26 @@ def like_post(request):
         return HttpResponseRedirect(current_page)
     else:
         return redirect('/')
+
+@login_required(login_url='signin')
+def comment_post(request):
+        if request.method == 'POST':
+            content= request.POST.get('content')
+            story_id = request.POST.get('story_id')
+            user_object = User.objects.get(username=request.user.username)
+            if content and story_id:
+                story = Story.objects.get(id=story_id)
+                comment = Comment.objects.create(user=user_object, content=content, story=story)
+                comment.save()
+                story.no_of_comments+=1
+                story.save()
+
+        # Get the URL of the current page
+        current_page = request.META.get('HTTP_REFERER')
+        if current_page:
+            return HttpResponseRedirect(current_page)
+        else:
+            return redirect('/')
 
 
 def signup(request):

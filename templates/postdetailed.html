@@ -81,7 +81,7 @@
         <div class="lg:grid-cols-3 mt-12">
             {% if profile %}
 
-            <div class="bg-white shadow rounded-md-mx-2 lg:mx-0">
+            <div class="bg-white shadow rounded-md mx-2 lg:mx-0">
 
                 <!-- post header-->
                 <div class="flex justify-between items-center px-4 py-1">
@@ -322,21 +322,66 @@
                                 </svg>
 
                             </div>
+                            <a href="#" class="flex items-center space-x-2">
+                                <div class="p-2 rounded-full text-black">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        width="25" height="25" class="">
+                                        <path fill-rule="evenodd"
+                                            d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+
+                                </div>
+
+                            </a>
                         </a>
 
                     </div>
                     <div class="flex space-x-4 lg:font-bold">
+                        {% if likes.count > 0 %}
                         <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
-                            {% if likes.count > 2 %}
-                            <span style="font-weight: 600; color: #000;">{{likes.first.user.username}}, and {{
-                                likes.count|add:"-1" }} other users liked </span>
-                            {% elif likes.count > 0 %}
-                            <span style="font-weight: 600; color: #000;">Liked by {{likes.all|join:" and " }}</span>
-                            {% else %}
-                            <span style="font-weight: 600; color: #000;">No likes</span>
                             {% endif %}
+                            {% if likes.count > 2 %}
+                            <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                            {% elif likes.count > 0 %}
+                            <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                            {% else %}
+                            <span style="font-weight: 600; color: #000;">0 likes</span>
+                            {% endif %}
+                            {% if likes.count > 0 %}
                         </a>
+                        {% endif %}
                     </div>
+
+                    <div class="flex space-x-4 lg:font-bold">
+                        {% if comments.count > 0 %}
+                        <a href="#">
+                            {% endif %}
+                            {% if comments.count > 0 %}
+                            <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>{{
+                            comments.first.content }}
+                            <div>
+                                <a>See {{comments.count|add:"-1"}} other comments</a>
+                            </div>
+                            {% else %}
+                            <span style="font-weight: 600; color: #000;">0 comments</span>
+                            {% endif %}
+                            {% if comments.count > 0 %}
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    {% if comments.count > 0 %}
+                    <div>
+                        <a>See {{ comments.count|add:"-1" }} other comments</a>
+                    </div>
+                    {% endif %}
+
+
+
+
+
+
                 </div>
             </div>
 
@@ -473,26 +518,47 @@
 
                             </div>
 
-
                         </a>
+
                         <div class="flex space-x-4 lg:font-bold">
-                            <a href="/usersliked?story_id={{story.id}}">
-                                {% if likes.count > 2 %}
-                                <span style="font-weight: 600; color: #000;">{{likes.first.user.username}}, and {{
-                                    likes.count|add:"-1" }} other users liked </span>
-                                {% elif likes.count > 0 %}
-                                <span style="font-weight: 600; color: #000;">{{likes.all|join:" and " }}</span>
-                                {% else %}
-                                <span style="font-weight: 600; color: #000;">No likes</span>
+                            {% if likes.count > 0 %}
+                            <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
                                 {% endif %}
+                                {% if likes.count > 2 %}
+                                <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                                {% elif likes.count > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 likes</span>
+                                {% endif %}
+                                {% if likes.count > 0 %}
                             </a>
+                            {% endif %}
                         </div>
 
+                        <div class="flex space-x-4 lg:font-bold">
+                            {% if comments.count > 0 %}
+                            <a href="#">
+                                {% endif %}
+                                {% if comments.count > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>{{
+                                comments.first.content }}
+                                <div>
+                                    <a>See {{comments.count|add:"-1"}} other comments</a>
+                                </div>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 comments</span>
+                                {% endif %}
+                                {% if comments.count > 0 %}
+                            </a>
+                            {% endif %}
+                        </div>
 
-
-
-
-
+                        {% if comments.count > 0 %}
+                        <div>
+                            <a>See {{ comments.count|add:"-1" }} other comments</a>
+                        </div>
+                        {% endif %}
                     </div>
 
 
@@ -502,6 +568,7 @@
 
             {% endif %}
         </div>
+        </br></br></br>
     </div>
 
 

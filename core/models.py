@@ -74,6 +74,7 @@ class Story(models.Model):
     files = models.ManyToManyField(File, blank=True)
     no_of_likes = models.IntegerField(default=0)
     is_liked_by_current_user = models.BooleanField(default=False)
+    no_of_comments = models.IntegerField(default=0)
 
 
     def __str__(self):
@@ -105,7 +106,7 @@ class Like(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
+    content = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
