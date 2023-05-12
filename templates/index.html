@@ -218,19 +218,6 @@
 
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    {% if story.locations.count > 2 %}
-                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
-                                    and
-                                    {{ story.locations.count|add:"-1" }} other locations
-                                    {% else %}
-                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:", " }}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
                                 <span style="font-weight: 600;">Tags:</span>
                                 <div class="tag-container">
                                     {% for tag in story.tags.all %}
@@ -239,6 +226,20 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    {% if story.locations.count > 2 %}
+                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                                    and
+                                    {{ story.locations.count|add:"-1" }} other locations
+                                    {% else %}
+                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
 
@@ -269,7 +270,7 @@
                         {% if story.files.all %}
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Images:</span>
+                                <span style="font-weight: 600;">Files:</span>
                             </div>
                         </div>
                         <div uk-lightbox class="flex justify-between items-center px-4 py-1">
@@ -432,19 +433,6 @@
 
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    {% if story.locations.count > 2 %}
-                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
-                                    and
-                                    {{ story.locations.count|add:"-1" }} other locations
-                                    {% else %}
-                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:", " }}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
                                 <span style="font-weight: 600;">Tags:</span>
                                 <div class="tag-container">
                                     {% for tag in story.tags.all %}
@@ -453,6 +441,20 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    {% if story.locations.count > 2 %}
+                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                                    and
+                                    {{ story.locations.count|add:"-1" }} other locations
+                                    {% else %}
+                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
 

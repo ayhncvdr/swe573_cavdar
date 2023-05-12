@@ -61,7 +61,7 @@
 
                     <form action="/newpost" method="POST" id="my-form" enctype="multipart/form-data"
                         onkeydown="return event.key != 'Enter';">
-                       
+
                         {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
                             <div class="col-span-2">
@@ -207,7 +207,7 @@
                                                 }
                                             },
                                             suggestionsCallback: (suggestions) => {
-                                                console.log(suggestions);
+                                                //console.log(suggestions);
                                             }
                                         });
                                         map.addControl(addressSearchControl);
@@ -262,16 +262,29 @@
                                         map.on("draw:created", function (e) {
                                             var type = e.layerType;
                                             var layer = e.layer;
-                                            console.log(e.layerType);
+                                            //console.log(e.layerType);
 
 
 
                                             if (type == 'circle') {
                                                 var radius = layer.getRadius();
                                                 console.log(radius);
+                                                // Create a GeoJSON object with the desired properties
+                                                var feature = {
+                                                    type: 'Feature',
+                                                    geometry: layer.toGeoJSON().geometry,
+                                                    properties: {
+                                                        radius: radius
+                                                    }
+                                                };
+
+                                                // Bind the feature to the layer
+                                                layer.feature = feature;
+
                                                 document.getElementById("radius").value = radius;
                                             }
-                                            console.log(layer.toGeoJSON());
+
+                                            // console.log(layer.toGeoJSON());
                                             layer.bindPopup('<p>' + JSON.stringify(layer.toGeoJSON()) + '</p>');
                                             var coordinates = JSON.stringify(layer.toGeoJSON().geometry.coordinates);
                                             var locationType = JSON.stringify(layer.toGeoJSON().geometry.type);
@@ -290,8 +303,8 @@
                                         map.on("draw:edited", function (e) {
                                             var layers = e.layers;
                                             layers.eachLayer(function (layer) {
-                                                console.log(layer)
-                                                console.log(layer.toGeoJSON());
+                                                // console.log(layer)
+                                                //console.log(layer.toGeoJSON());
                                             })
 
                                         });
@@ -299,8 +312,8 @@
                                         map.on("draw:deleted", function (e) {
                                             var layers = e.layers;
                                             layers.eachLayer(function (layer) {
-                                                console.log(layer)
-                                                console.log(layer.toGeoJSON());
+                                                //  console.log(layer)
+                                                // console.log(layer.toGeoJSON());
                                             })
                                         });
 

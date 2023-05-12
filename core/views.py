@@ -198,7 +198,13 @@ def newPost(request):
                     location_name = results[0]['formatted']
                     location_name = location_name.replace("unnamed road,", "")
                     print(location_name)
-                    location = Location(name=location_name, point=point)
+                    radius = feature.get('properties', {}).get('radius')
+                    if radius:
+                        location = Location(
+                            name="Circle Area in " + location_name, point=point)
+                        location.radius = float(radius)
+                    else:
+                        location = Location(name=location_name, point=point)
 
                 elif location_type == 'Polygon':
                     polygon = Polygon(coordinates[0])
@@ -208,7 +214,7 @@ def newPost(request):
                     location_name = location_name.replace("unnamed road,", "")
                     print(location_name)
                     location = Location(
-                        name="Around "+location_name, area=polygon)
+                        name="Area Around "+location_name, area=polygon)
 
                 elif location_type == 'LineString':
                     linestring = LineString(coordinates)
@@ -218,13 +224,9 @@ def newPost(request):
                     location_name = location_name.replace("unnamed road,", "")
                     print(location_name)
                     location = Location(
-                        name="Area Around "+location_name, lines=linestring)
+                        name="Lines Around "+location_name, lines=linestring)
 
                 if location:
-                    radius = feature.get('properties', {}).get('radius')
-                    if radius:
-                        location.radius = float(radius)
-
                     locations.append(location)
         print(locations)
 
@@ -259,16 +261,17 @@ def newPost(request):
             messages.error(request, 'At least one location is required.')
             return redirect('newpost')
 
-        if date_format== 1:
+        if date_format == 1:
             if not date_exact:
                 messages.error(request, 'Exact date is required.')
                 return redirect('newpost')
-           
+
         elif date_format == 2:
             if not date_range_start or not date_range_end:
-                messages.error(request, 'Start date and end date are required.')
+                messages.error(
+                    request, 'Start date and end date are required.')
                 return redirect('newpost')
-            
+
         elif date_format == 3:
             if not decade:
                 messages.error(request, 'Decade is required.')
@@ -276,7 +279,6 @@ def newPost(request):
         else:
             messages.error(request, 'Invalid date option.')
             return redirect('newpost')
-
 
         # tags
         tag_objs = []

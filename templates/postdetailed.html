@@ -16,6 +16,23 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <!-- leaflet js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <!-- leaflet draw plugin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/@geoapify/leaflet-address-search-plugin@^1/dist/L.Control.GeoapifyAddressSearch.min.css" />
+    <script
+        src="https://unpkg.com/@geoapify/leaflet-address-search-plugin@^1/dist/L.Control.GeoapifyAddressSearch.min.js"></script>
+
+
+
     <style>
         .tag-container {
             display: flex;
@@ -33,15 +50,14 @@
 </head>
 
 <body>
-        <header>
+    <header>
         <div class="header_inner">
             <div class="left-side">
-                <a href="" style="font-style: italic; font-weight: bold; font-size: large;"> Memorycloud</a>
+                <a href="/" style="font-style: italic; font-weight: bold; font-size: large;"> Memorycloud</a>
 
             </div>
 
             <div class="right-side lg:pr-4">
-                <!-- upload -->
                 <a href="/newpost"
                     class="bg-pink-500 flex font-bold hover:bg-pink-600 hover:text-white inline-block items-center max-h-10 mr-4 px-4 py-2 rounded shadow text-white">
                     <ion-icon name="add-circle" class="-mb-1 mr-1 opacity-90 text-xl uilus-circle"></ion-icon> New Story
@@ -58,13 +74,454 @@
                 </div>
 
             </div>
+
         </div>
     </header>
+    <div class="container m-auto ">
+        <div class="lg:grid-cols-3 mt-12">
+            {% if profile %}
 
-    <h1>Post Detailed</h1>
+            <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
 
-    
-    
+                <!-- post header-->
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-2">
+                        <a href="#">
+                            <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                {% if profile.profile_image.url %}
+                                <img src="{{ profile.profile_image.url }}"
+                                    class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                {% else %}
+                                <img src="/media/blank-profile-picture.png"
+                                    class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                {% endif %}
+                            </div>
+                        </a>
+
+                        <span class="block font-semibold"><a href="/profile/{{story.user}}">{{story.user}}</a></span>
+                    </div>
+                </div>
+                <hr style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            <span style="font-weight: 600;">Title:</span> {{ story.title}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            <span style="font-weight: 600;">Timeframe:</span>
+                            {% if story.date_format == 1 %}
+                            {{ story.date_exact }}
+                            {% elif story.date_format == 2 %}
+                            {{ story.date_range_start }} - {{ story.date_range_end }}
+                            {% elif story.date_format == 3 %}
+                            {{ story.decade }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <span style="font-weight: 600;">Tags:</span>
+                        <div class="tag-container">
+                            {% for tag in story.tags.all %}
+                            <div class="tag" style="background-color: grey">
+                                <p style="color: white;">{{ tag.name }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            {% if story.locations.count > 2 %}
+                            <span style="font-weight: 600;">Locations:</span> {{ story.locations.all|join:" ; " }}
+                            {% else %}
+                            <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:" ; " }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div id="map" style="height: 500px;">
+                    <script>
+                        var map = L.map('map');
+                    </script>
+
+                    {% for location in story.locations.all %}
+                    {% if location.point and not location.radius %}
+
+                    <script>
+                        var locationString = '{{ location.point }}';
+                        var pointIndex = locationString.indexOf('(') + 1; // Get the index of the opening parenthesis
+                        var pointCoordinates = locationString.substring(pointIndex, locationString.length - 1); // Extract the coordinates substring
+                        var coordinatesArray = pointCoordinates.split(' '); // Split the coordinates string by space
+                        var lat = parseFloat(coordinatesArray[0]); // Parse the latitude as a float number
+                        var lon = parseFloat(coordinatesArray[1]); // Parse the longitude as a float number
+
+                        console.log('Latitude:', lat);
+                        console.log('Longitude:', lon);
+
+
+
+                        map.setView([lon, lat], 4);
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        L.marker([lon, lat]).addTo(map);
+                    </script>
+
+                    {% elif location.point and location.radius %}
+                    <script>
+                        var locationString = '{{ location.point }}';
+                        var pointIndex = locationString.indexOf('(') + 1; // Get the index of the opening parenthesis
+                        var pointCoordinates = locationString.substring(pointIndex, locationString.length - 1); // Extract the coordinates substring
+                        var coordinatesArray = pointCoordinates.split(' '); // Split the coordinates string by space
+                        var lat = parseFloat(coordinatesArray[0]); // Parse the latitude as a float number
+                        var lon = parseFloat(coordinatesArray[1]); // Parse the longitude as a float number
+                        var radius = parseFloat('{{ location.radius }}'); // Parse the radius as a float number
+
+                        console.log('Latitude:', lat);
+                        console.log('Longitude:', lon);
+                        console.log('Radius:', radius);
+
+                        map.setView([lon, lat], 4);
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+                        //L.marker([lon, lat]).addTo(map);
+                        L.circle([lon, lat], { radius: radius }).addTo(map);
+                    </script>
+
+                    {% elif location.area %}
+                    <script>
+                        var locationString = '{{ location.area }}';
+                        var coordinatesString = locationString.substring(locationString.indexOf('((') + 2, locationString.indexOf('))'));
+                        var coordinatesArray = coordinatesString.split(', ');
+
+                        // Create an array to hold the polygon coordinates
+                        var polygonCoordinates = [];
+
+                        // Loop through the coordinates and convert them to LatLng objects
+                        for (var i = 0; i < coordinatesArray.length; i++) {
+                            var latLngString = coordinatesArray[i].split(' ');
+                            var lat = parseFloat(latLngString[1]);
+                            var lon = parseFloat(latLngString[0]);
+                            var latLng = [lat, lon];
+                            polygonCoordinates.push(latLng);
+                        }
+                        if (polygonCoordinates.length > 0) {
+                            map.setView([polygonCoordinates[0][1], polygonCoordinates[0][0]], 4);
+                        }
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        // Create the polygon and add it to the map
+                        var polygon = L.polygon(polygonCoordinates).addTo(map);
+                    </script>
+
+                    {% elif location.lines %}
+                    <script>
+                        var locationString = '{{ location.lines }}';
+                        var coordinatesString = locationString.substring(locationString.indexOf('(') + 1, locationString.indexOf(')'));
+                        var coordinatesArray = coordinatesString.split(', ');
+
+                        // Create an array to hold the polyline coordinates
+                        var polylineCoordinates = [];
+
+                        // Loop through the coordinates and convert them to LatLng objects
+                        for (var i = 0; i < coordinatesArray.length; i++) {
+                            var latLngString = coordinatesArray[i].split(' ');
+                            var lat = parseFloat(latLngString[1]);
+                            var lon = parseFloat(latLngString[0]);
+                            var latLng = [lat, lon];
+                            polylineCoordinates.push(latLng);
+                        }
+
+                        if (polylineCoordinates.length > 0) {
+                            map.setView([polylineCoordinates[0][1], polylineCoordinates[0][0]], 4);
+                        }
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        // Create the polyline and add it to the map
+                        var polyline = L.polyline(polylineCoordinates).addTo(map);
+                    </script>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+
+
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            <span style="font-weight: 600;">Content:</span>
+                            {{ story.content}}
+                        </p>
+                    </div>
+                </div>
+
+
+
+                {% if story.files.all %}
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <span style="font-weight: 600;">Files:</span>
+                    </div>
+                </div>
+                <div uk-lightbox class="flex justify-between items-center px-4 py-1">
+                    <div style="display: flex; gap: 10px;">
+                        {% for file in story.files.all %}
+                        <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
+                                <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
+                            </a>
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+
+
+                <div class="py-3 px-4 space-y-3">
+
+                    <div class="flex space-x-4 lg:font-bold">
+                        <a href="/like-story?story_id={{story.id}}" class="flex items-center space-x-2">
+                            <div class="p-2 rounded-full text-black">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    width="25" height="25" class="">
+                                    <path
+                                        d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                </svg>
+                                <p>10</p>
+                                <!-- CHECK HERE -->
+                                <!-- {% if story.no_of_likes == 0 %}
+                                    <p>No likes</p>
+                                    {% elif story.no_of_likes == 1 %}
+                                    <p>Liked by {{story.no_of_likes}} person</p>
+                                    {% else %}
+                                    <p>Liked by {{story.no_of_likes}} people</p>
+                                    {% endif %} -->
+                            </div>
+
+                        </a>
+                        <a href="#" class="flex items-center space-x-2">
+                            <div class="p-2 rounded-full text-black">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    width="25" height="25" class="">
+                                    <path fill-rule="evenodd"
+                                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p>10</p>
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
+
+                <!-- post header-->
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-2">
+                        <a href="#">
+                            <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                {% if profile.profile_image.url %}
+                                <img src="{{ profile.profile_image.url }}"
+                                    class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                {% else %}
+                                <img src="/media/blank-profile-picture.png"
+                                    class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                {% endif %}
+                            </div>
+                        </a>
+
+                        <span class="block font-semibold"><a href="/profile/{{story.user}}">{{story.user}}</a></span>
+                    </div>
+                </div>
+                <hr style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            <span style="font-weight: 600;">Title:</span> {{ story.title}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            <span style="font-weight: 600;">Timeframe:</span>
+                            {% if story.date_format == 1 %}
+                            {{ story.date_exact }}
+                            {% elif story.date_format == 2 %}
+                            {{ story.date_range_start }} - {{ story.date_range_end }}
+                            {% elif story.date_format == 3 %}
+                            {{ story.decade }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <span style="font-weight: 600;">Tags:</span>
+                        <div class="tag-container">
+                            {% for tag in story.tags.all %}
+                            <div class="tag" style="background-color: grey">
+                                <p style="color: white;">{{ tag.name }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <p style="word-break: break-all; white-space: normal;">
+                            {% if story.locations.count > 2 %}
+                            <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                            and
+                            {{ story.locations.count|add:"-1" }} other locations
+                            {% else %}
+                            <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:", " }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if profile %}
+                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}">
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Content:</span>
+                                {{ story.content|truncatechars:500 }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <a href="/postdetailed?story_id={{ story.id }}">
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Content:</span>
+                                {{ story.content|truncatechars:500 }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
+
+                {% if story.files.all %}
+                <div class="flex justify-between items-center px-4 py-1">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <span style="font-weight: 600;">Images:</span>
+                    </div>
+                </div>
+                <div uk-lightbox class="flex justify-between items-center px-4 py-1">
+                    <div style="display: flex; gap: 10px;">
+                        {% for file in story.files.all %}
+                        <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
+                                <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
+                            </a>
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+
+
+                <div class="py-3 px-4 space-y-3">
+
+                    <div class="flex space-x-4 lg:font-bold">
+                        <a href="/like-story?story_id={{story.id}}" class="flex items-center space-x-2">
+                            <div class="p-2 rounded-full text-black">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    width="25" height="25" class="">
+                                    <path
+                                        d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                </svg>
+                                <p>10</p>
+                                <!-- CHECK HERE -->
+                                <!-- {% if story.no_of_likes == 0 %}
+                                    <p>No likes</p>
+                                    {% elif story.no_of_likes == 1 %}
+                                    <p>Liked by {{story.no_of_likes}} person</p>
+                                    {% else %}
+                                    <p>Liked by {{story.no_of_likes}} people</p>
+                                    {% endif %} -->
+                            </div>
+
+                        </a>
+                        <a href="#" class="flex items-center space-x-2">
+                            <div class="p-2 rounded-full text-black">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    width="25" height="25" class="">
+                                    <path fill-rule="evenodd"
+                                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <p>10</p>
+                            </div>
+
+                        </a>
+
+                        {% if profile %}
+                        <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                            class="flex items-center space-x-2 flex-1 justify-end">
+                            <p style="font-weight: 600;">See Details &rarr;</p>
+                        </a>
+                        {% else %}
+                        <a href="/postdetailed?story_id={{ story.id }}"
+                            class="flex items-center space-x-2 flex-1 justify-end">
+                            <p style="font-weight: 600;">See Details &rarr;</p>
+                        </a>
+                        {% endif %}
+
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+
 
 </body>
 
