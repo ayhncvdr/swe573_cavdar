@@ -487,6 +487,129 @@
                     </div>
                 </div>
 
+                <div id="map" style="height: 500px;">
+                    <script>
+                        var map = L.map('map');
+                    </script>
+
+                    {% for location in story.locations.all %}
+                    {% if location.point and not location.radius %}
+
+                    <script>
+                        var locationString = '{{ location.point }}';
+                        var pointIndex = locationString.indexOf('(') + 1; // Get the index of the opening parenthesis
+                        var pointCoordinates = locationString.substring(pointIndex, locationString.length - 1); // Extract the coordinates substring
+                        var coordinatesArray = pointCoordinates.split(' '); // Split the coordinates string by space
+                        var lat = parseFloat(coordinatesArray[0]); // Parse the latitude as a float number
+                        var lon = parseFloat(coordinatesArray[1]); // Parse the longitude as a float number
+
+                        console.log('Latitude:', lat);
+                        console.log('Longitude:', lon);
+
+
+
+                        map.setView([lon, lat], 4);
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        L.marker([lon, lat]).addTo(map);
+                    </script>
+
+                    {% elif location.point and location.radius %}
+                    <script>
+                        var locationString = '{{ location.point }}';
+                        var pointIndex = locationString.indexOf('(') + 1; // Get the index of the opening parenthesis
+                        var pointCoordinates = locationString.substring(pointIndex, locationString.length - 1); // Extract the coordinates substring
+                        var coordinatesArray = pointCoordinates.split(' '); // Split the coordinates string by space
+                        var lat = parseFloat(coordinatesArray[0]); // Parse the latitude as a float number
+                        var lon = parseFloat(coordinatesArray[1]); // Parse the longitude as a float number
+                        var radius = parseFloat('{{ location.radius }}'); // Parse the radius as a float number
+
+                        console.log('Latitude:', lat);
+                        console.log('Longitude:', lon);
+                        console.log('Radius:', radius);
+
+                        map.setView([lon, lat], 4);
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+                        //L.marker([lon, lat]).addTo(map);
+                        L.circle([lon, lat], { radius: radius }).addTo(map);
+                    </script>
+
+                    {% elif location.area %}
+                    <script>
+                        var locationString = '{{ location.area }}';
+                        var coordinatesString = locationString.substring(locationString.indexOf('((') + 2, locationString.indexOf('))'));
+                        var coordinatesArray = coordinatesString.split(', ');
+
+                        // Create an array to hold the polygon coordinates
+                        var polygonCoordinates = [];
+
+                        // Loop through the coordinates and convert them to LatLng objects
+                        for (var i = 0; i < coordinatesArray.length; i++) {
+                            var latLngString = coordinatesArray[i].split(' ');
+                            var lat = parseFloat(latLngString[1]);
+                            var lon = parseFloat(latLngString[0]);
+                            var latLng = [lat, lon];
+                            polygonCoordinates.push(latLng);
+                        }
+                        if (polygonCoordinates.length > 0) {
+                            map.setView([polygonCoordinates[0][1], polygonCoordinates[0][0]], 4);
+                        }
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        // Create the polygon and add it to the map
+                        var polygon = L.polygon(polygonCoordinates).addTo(map);
+                    </script>
+
+                    {% elif location.lines %}
+                    <script>
+                        var locationString = '{{ location.lines }}';
+                        var coordinatesString = locationString.substring(locationString.indexOf('(') + 1, locationString.indexOf(')'));
+                        var coordinatesArray = coordinatesString.split(', ');
+
+                        // Create an array to hold the polyline coordinates
+                        var polylineCoordinates = [];
+
+                        // Loop through the coordinates and convert them to LatLng objects
+                        for (var i = 0; i < coordinatesArray.length; i++) {
+                            var latLngString = coordinatesArray[i].split(' ');
+                            var lat = parseFloat(latLngString[1]);
+                            var lon = parseFloat(latLngString[0]);
+                            var latLng = [lat, lon];
+                            polylineCoordinates.push(latLng);
+                        }
+
+                        if (polylineCoordinates.length > 0) {
+                            map.setView([polylineCoordinates[0][1], polylineCoordinates[0][0]], 4);
+                        }
+                        L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=ObmhcyIVPHpLuSAuaCKz', {
+
+                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                            maxZoom: 18
+
+                        }).addTo(map);
+
+                        // Create the polyline and add it to the map
+                        var polyline = L.polyline(polylineCoordinates).addTo(map);
+                    </script>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
                 {% if profile %}
                 <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}">
                     <div class="flex justify-between items-center px-4 py-1">

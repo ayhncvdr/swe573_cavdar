@@ -33,7 +33,7 @@ def index(request):
     for story in stories:
         user_story_object = User.objects.get(username=story.user.username)
         likes = Like.objects.filter(story=story)
-        comments= Comment.objects.filter(story=story)
+        comments = Comment.objects.filter(story=story)
         try:
             user_story_profile = Profile.objects.get(user=user_story_object)
         except Profile.DoesNotExist:
@@ -71,6 +71,26 @@ def postDetailed(request):
 
 
 @login_required(login_url='signin')
+def profile(request, pk):
+    current_user = User.objects.get(username=request.user.username)
+    current_profile = Profile.objects.get(user=current_user)
+    user_object = User.objects.get(username=pk)
+    user_profile = Profile.objects.get(user=user_object)
+    user_posts = Story.objects.filter(user=user_object).order_by('-created_at')
+    user_posts_length = len(user_posts)
+
+    context = {
+        'current_user': current_user,
+        'current_profile': current_profile,
+        'user_object': user_object,
+        'user_profile': user_profile,
+        'user_posts': user_posts,
+        'user_posts_length': user_posts_length
+    }
+    return render(request, 'profile.html', context)
+
+
+@login_required(login_url='signin')
 def usersLiked(request):
     story_id = request.GET.get('story_id')
     profile_id = request.GET.get('profile_id')
@@ -87,6 +107,7 @@ def usersLiked(request):
         return HttpResponse("Profile not found")
     except User.DoesNotExist:
         return HttpResponse("User not found")
+
 
 @login_required(login_url='signin')
 def usersCommented(request):
@@ -135,25 +156,27 @@ def like_post(request):
     else:
         return redirect('/')
 
+
 @login_required(login_url='signin')
 def comment_post(request):
-        if request.method == 'POST':
-            content= request.POST.get('comment')
-            story_id = request.POST.get('story_id')
-            user_object = User.objects.get(username=request.user.username)
-            if content and story_id:
-                story = Story.objects.get(id=story_id)
-                comment = Comment.objects.create(user=user_object, content=content, story=story)
-                comment.save()
-                story.no_of_comments+=1
-                story.save()
+    if request.method == 'POST':
+        content = request.POST.get('comment')
+        story_id = request.POST.get('story_id')
+        user_object = User.objects.get(username=request.user.username)
+        if content and story_id:
+            story = Story.objects.get(id=story_id)
+            comment = Comment.objects.create(
+                user=user_object, content=content, story=story)
+            comment.save()
+            story.no_of_comments += 1
+            story.save()
 
-        # Get the URL of the current page
-        current_page = request.META.get('HTTP_REFERER')
-        if current_page:
-            return HttpResponseRedirect(current_page)
-        else:
-            return redirect('/')
+    # Get the URL of the current page
+    current_page = request.META.get('HTTP_REFERER')
+    if current_page:
+        return HttpResponseRedirect(current_page)
+    else:
+        return redirect('/')
 
 
 def signup(request):
