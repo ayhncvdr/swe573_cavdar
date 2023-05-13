@@ -45,6 +45,16 @@
             font-weight: normal;
             margin-right: 8px;
         }
+
+        /* .comment-section {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 50%;
+            background-color: #f1f1f1;
+            padding: 20px;
+        } */
     </style>
 
 </head>
@@ -322,18 +332,6 @@
                                 </svg>
 
                             </div>
-                            <a href="#" class="flex items-center space-x-2">
-                                <div class="p-2 rounded-full text-black">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        width="25" height="25" class="">
-                                        <path fill-rule="evenodd"
-                                            d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-
-                                </div>
-
-                            </a>
                         </a>
 
                     </div>
@@ -356,28 +354,59 @@
                     <div class="flex space-x-4 lg:font-bold">
                         {% if comments.count > 0 %}
                         <a href="#">
-                            {% endif %}
-                            {% if comments.count > 0 %}
-                            <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>{{
-                            comments.first.content }}
-                            <div>
-                                <a>See {{comments.count|add:"-1"}} other comments</a>
-                            </div>
-                            {% else %}
-                            <span style="font-weight: 600; color: #000;">0 comments</span>
-                            {% endif %}
-                            {% if comments.count > 0 %}
+                            <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>
+                            {{ comments.first.content|safe }}
                         </a>
+                        {% else %}
+                        <span style="font-weight: 600; color: #000;">0 comments</span>
                         {% endif %}
                     </div>
 
-                    {% if comments.count > 0 %}
+                    {% if comments.count > 1 %}
                     <div>
                         <a>See {{ comments.count|add:"-1" }} other comments</a>
                     </div>
                     {% endif %}
 
+                    <form action="/comment-post" method="POST" id="my-form">
+                        {% csrf_token %}
 
+                        <div class="comment-section">
+                            <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
+                            <textarea id="comment" name="comment" rows="4" cols="50"
+                                placeholder="Type your comment here"
+                                oninput="checkCharacterLimit(this, 255)"></textarea>
+                            <p id="character-count">*255 characters remaining</p>
+                            <script>
+                                function checkCharacterLimit(textarea, limit) {
+                                    var count = textarea.value.length;
+                                    var remaining = limit - count;
+                                    var countElement = document.getElementById("character-count");
+
+                                    if (remaining >= 0) {
+                                        countElement.innerHTML = remaining + " characters remaining";
+                                        countElement.style.color = ""; // Reset the color
+                                    } else {
+                                        countElement.innerHTML = "*Exceeded the character limit!";
+                                        countElement.style.color = "red"; // Set the color to red
+                                        textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
+                                        textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
+                                        textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
+                                        // You can also disable the submit button or show an error message here
+                                    }
+                                }
+                            </script>
+
+
+                            <input type="hidden" name="story_id" value="{{ story.id }}">
+                            <br />
+                            <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
+                                <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
+                            </div>
+                        </div>
+
+
+                    </form>
 
 
 
@@ -520,47 +549,80 @@
 
                         </a>
 
-                        <div class="flex space-x-4 lg:font-bold">
+                       
+                    </div>
+                    <div class="flex space-x-4 lg:font-bold">
+                        {% if likes.count > 0 %}
+                        <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
+                            {% endif %}
+                            {% if likes.count > 2 %}
+                            <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                            {% elif likes.count > 0 %}
+                            <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
+                            {% else %}
+                            <span style="font-weight: 600; color: #000;">0 likes</span>
+                            {% endif %}
                             {% if likes.count > 0 %}
-                            <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
-                                {% endif %}
-                                {% if likes.count > 2 %}
-                                <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
-                                {% elif likes.count > 0 %}
-                                <span style="font-weight: 600; color: #000;">{{likes.count}} likes</span>
-                                {% else %}
-                                <span style="font-weight: 600; color: #000;">0 likes</span>
-                                {% endif %}
-                                {% if likes.count > 0 %}
-                            </a>
-                            {% endif %}
-                        </div>
-
-                        <div class="flex space-x-4 lg:font-bold">
-                            {% if comments.count > 0 %}
-                            <a href="#">
-                                {% endif %}
-                                {% if comments.count > 0 %}
-                                <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>{{
-                                comments.first.content }}
-                                <div>
-                                    <a>See {{comments.count|add:"-1"}} other comments</a>
-                                </div>
-                                {% else %}
-                                <span style="font-weight: 600; color: #000;">0 comments</span>
-                                {% endif %}
-                                {% if comments.count > 0 %}
-                            </a>
-                            {% endif %}
-                        </div>
-
-                        {% if comments.count > 0 %}
-                        <div>
-                            <a>See {{ comments.count|add:"-1" }} other comments</a>
-                        </div>
+                        </a>
                         {% endif %}
                     </div>
 
+                    <div class="flex space-x-4 lg:font-bold">
+                        {% if comments.count > 0 %}
+                        <a href="#">
+                            <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>
+                            {{ comments.first.content|safe }}
+                        </a>
+                        {% else %}
+                        <span style="font-weight: 600; color: #000;">0 comments</span>
+                        {% endif %}
+                    </div>
+
+                    {% if comments.count > 1 %}
+                    <div>
+                        <a>See {{ comments.count|add:"-1" }} other comments</a>
+                    </div>
+                    {% endif %}
+
+                    <form action="/comment-post" method="POST" id="my-form">
+                        {% csrf_token %}
+
+                        <div class="comment-section">
+                            <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
+                            <textarea id="comment" name="comment" rows="4" cols="50"
+                                placeholder="Type your comment here"
+                                oninput="checkCharacterLimit(this, 255)"></textarea>
+                            <p id="character-count">*255 characters remaining</p>
+
+                            <script>
+                                function checkCharacterLimit(textarea, limit) {
+                                    var count = textarea.value.length;
+                                    var remaining = limit - count;
+                                    var countElement = document.getElementById("character-count");
+
+                                    if (remaining >= 0) {
+                                        countElement.innerHTML = remaining + " characters remaining";
+                                        countElement.style.color = ""; // Reset the color
+                                    } else {
+                                        countElement.innerHTML = "*Exceeded the character limit!";
+                                        countElement.style.color = "red"; // Set the color to red
+                                        textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
+                                        textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
+                                        textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
+                                    }
+                                }
+                            </script>
+
+
+                            <input type="hidden" name="story_id" value="{{ story.id }}">
+                            <br />
+                            <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
+                                <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
+                            </div>
+                        </div>
+
+
+                    </form>
 
                 </div>
 

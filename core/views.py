@@ -88,6 +88,24 @@ def usersLiked(request):
     except User.DoesNotExist:
         return HttpResponse("User not found")
 
+@login_required(login_url='signin')
+def usersCommented(request):
+    story_id = request.GET.get('story_id')
+    profile_id = request.GET.get('profile_id')
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+    try:
+        story = Story.objects.get(id=story_id)
+        comments = Comment.objects.filter(story=story)
+        profile = Profile.objects.get(id=profile_id) if profile_id else None
+        return render(request, 'usersliked.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'comments': comments})
+    except Story.DoesNotExist:
+        return HttpResponse(story_id)
+    except Profile.DoesNotExist:
+        return HttpResponse("Profile not found")
+    except User.DoesNotExist:
+        return HttpResponse("User not found")
+
 
 @login_required(login_url='signin')
 def like_post(request):
@@ -120,7 +138,7 @@ def like_post(request):
 @login_required(login_url='signin')
 def comment_post(request):
         if request.method == 'POST':
-            content= request.POST.get('content')
+            content= request.POST.get('comment')
             story_id = request.POST.get('story_id')
             user_object = User.objects.get(username=request.user.username)
             if content and story_id:
