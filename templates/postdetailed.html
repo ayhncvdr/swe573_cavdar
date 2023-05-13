@@ -353,7 +353,7 @@
 
                     <div class="flex space-x-4 lg:font-bold">
                         {% if comments.count > 0 %}
-                        <a href="#">
+                        <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">
                             <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>
                             {{ comments.first.content|safe }}
                         </a>
@@ -364,7 +364,7 @@
 
                     {% if comments.count > 1 %}
                     <div>
-                        <a>See {{ comments.count|add:"-1" }} other comments</a>
+                        <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">See {{ comments.count|add:"-1" }} other comments</a>
                     </div>
                     {% endif %}
 
@@ -549,7 +549,7 @@
 
                         </a>
 
-                       
+
                     </div>
                     <div class="flex space-x-4 lg:font-bold">
                         {% if likes.count > 0 %}
@@ -569,7 +569,7 @@
 
                     <div class="flex space-x-4 lg:font-bold">
                         {% if comments.count > 0 %}
-                        <a href="#">
+                        <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">
                             <span style="font-weight: 600; color: #000;">{{comments.first.user.username}}: </span>
                             {{ comments.first.content|safe }}
                         </a>
@@ -580,7 +580,8 @@
 
                     {% if comments.count > 1 %}
                     <div>
-                        <a>See {{ comments.count|add:"-1" }} other comments</a>
+                        <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">See {{
+                            comments.count|add:"-1" }} other comments</a>
                     </div>
                     {% endif %}
 

@@ -326,7 +326,7 @@
                             </div>
                             <div class="flex space-x-4 lg:font-bold">
                                 {% if story.no_of_comments > 0 %}
-                                <a href="#">
+                                <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}"">
                                     {% endif %}
                                     {% if story.no_of_comments > 2 %}
                                     <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
@@ -581,7 +581,7 @@
                             </div>
                             <div class="flex space-x-4 lg:font-bold">
                                 {% if story.no_of_likes > 0 %}
-                                <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
+                                <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">
                                     {% endif %}
                                     {% if story.no_of_likes > 2 %}
                                     <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>

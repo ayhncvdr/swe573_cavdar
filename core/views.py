@@ -98,7 +98,7 @@ def usersCommented(request):
         story = Story.objects.get(id=story_id)
         comments = Comment.objects.filter(story=story)
         profile = Profile.objects.get(id=profile_id) if profile_id else None
-        return render(request, 'usersliked.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'comments': comments})
+        return render(request, 'userscommented.html', {'story': story, 'profile': profile, 'user_profile': user_profile, 'comments': comments})
     except Story.DoesNotExist:
         return HttpResponse(story_id)
     except Profile.DoesNotExist:

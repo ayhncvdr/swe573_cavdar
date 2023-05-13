@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'favicon.png' %}" rel="icon" type="image/png">
-    <title>Users Liked</title>
+    <title>Users Commented</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
@@ -16,7 +16,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <title>Users Liked</title>
+    <title>Users Commented</title>
 </head>
 
 <body>
@@ -52,18 +52,26 @@
         <div class="lg:grid-cols-3 mt-12">
 
             <div class="bg-white shadow rounded-md-mx-2 lg:mx-0">
-                {% for like in likes %}
+                {% for comment in comments %}
                 <div class="flex justify-between items-center px-4 py-1">
 
                     <div class="flex flex-1 items-center space-x-2">
-                        <a href="#">
-                            <span class="block font-semibold">{{ like.user.username }}</span>
-                        </a>
+                       
+                        <p style="word-break: break-all; white-space: normal;">
+                            <a href="#">
+                              <b>
+                                {{ comment.user.username }}:
+                              </b> 
+                                {{ comment.content }}
+
+                            </a>
+                        </p>
+                        
                     </div>
 
                 </div>
                 {% if not forloop.last %}
-                <hr style="margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid ; color: grey; height: 0;">
+                <hr style="margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid; color:grey; height: 0;">
                 {% endif %}
                 {% endfor %}
 
