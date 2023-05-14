@@ -448,13 +448,13 @@
                 <li><a href="">Discover</a></li>
                 <li><a href="/profile/{{user_profile.username}}">My Profile</a></li>
                 <li><a href="/newpost">New Post</a></li>
-
-                <li class="nav-profile">
+    
+                <li class="nav-profile d-flex align-items-center">
                     <a href="">
                         {% if user_profile.profile_image.url %}
-                        <img src="{{ user_profile.profile_image.url }}" class="profile-image">
+                        <img src="{{ user_profile.profile_image.url }}" class="profile-image" style="height:25px ; width: 25px;">
                         {% else %}
-                        <img src="/media/blank-profile-picture.png" class="profile-image">
+                        <img src="/media/blank-profile-picture.png" class="profile-image" style="height:25px ; width: 25px;">
                         {% endif %}
                     </a>
                     <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
@@ -467,6 +467,7 @@
             </ul>
         </div>
     </nav>
+    
 
 
     <div class="container m-auto">

@@ -441,9 +441,9 @@
                 <li class="nav-profile">
                     <a href="">
                         {% if user_profile.profile_image.url %}
-                        <img src="{{ user_profile.profile_image.url }}" class="profile-image">
+                        <img src="{{ user_profile.profile_image.url }}" class="profile-image" style="height:25px ; width: 25px;">
                         {% else %}
-                        <img src="/media/blank-profile-picture.png" class="profile-image">
+                        <img src="/media/blank-profile-picture.png" class="profile-image" style="height:25px ; width: 25px;">
                         {% endif %}
                     </a>
                     <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
