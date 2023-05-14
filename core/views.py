@@ -99,13 +99,43 @@ def profile(request, pk):
         'user_profile': user_profile,
         'user_posts': user_posts,
         'user_posts_length': user_posts_length,
-        'button_text': button_text, 
-        'user_followers':user_followers,
-        'user_followers_count':user_followers_count,
-        'user_following':user_following,
-        'user_following_count':user_following_count,
+        'button_text': button_text,
+        'user_followers': user_followers,
+        'user_followers_count': user_followers_count,
+        'user_following': user_following,
+        'user_following_count': user_following_count,
     }
     return render(request, 'profile.html', context)
+
+
+@login_required(login_url='signin')
+def usersFollowers(request):
+    user_name = request.GET.get('user_name')
+    user_object = User.objects.get(username=user_name)
+    current_user = User.objects.get(username=request.user.username)
+    current_profile = Profile.objects.get(user=current_user)
+    followers = Follower.objects.filter(user=user_object)
+    context = {
+        'followers': followers,
+        'current_user': current_user,
+        'current_profile': current_profile
+    }
+    return render(request, 'followers.html', context)
+
+
+@login_required(login_url='signin')
+def usersFollowing(request):
+    user_name = request.GET.get('user_name')
+    user_object = User.objects.get(username=user_name)
+    current_user = User.objects.get(username=request.user.username)
+    current_profile = Profile.objects.get(user=current_user)
+    followers = Follower.objects.filter(follower=user_object)
+    context = {
+        'followers': followers,
+        'current_user': current_user,
+        'current_profile': current_profile
+    }
+    return render(request, 'following.html', context)
 
 
 @login_required(login_url='signin')

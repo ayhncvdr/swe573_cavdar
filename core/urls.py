@@ -17,4 +17,6 @@ urlpatterns = [
     path('profile/<str:pk>', views.profile, name='profile'), 
     path('delete-story', views.delete_story, name="delete-story"),
     path('follow', views.follow, name="follow"),
+    path('usersfollowers', views.usersFollowers, name='usersfollowers'),
+    path('usersfollowing', views.usersFollowing, name='usersfollowing'),
 ]

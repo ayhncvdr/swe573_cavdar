@@ -49,7 +49,7 @@
             height: 25px;
         }
 
-        
+
 
         /* Base Styles */
 
@@ -412,7 +412,17 @@
                 }
             }
         }
-        
+        .link-no-underline {
+        color: inherit; /* or specify your desired color */
+        text-decoration: none;
+        }
+
+        .link-no-hover:hover {
+        text-decoration: none;
+        color: inherit; /* or specify your desired color */
+        }
+
+
     </style>
     <title>Profile - {{user_profile.user.username}}</title>
 
@@ -428,7 +438,7 @@
                 Memorycloud</a>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#">Discover</a></li>
-                <li {% if user_profile == current_profile %}class="active"{% endif %}><a href="">My Profile</a></li>
+                <li {% if user_profile == current_profile %}class="active" {% endif %}><a href="/profile/{{current_profile.username}}">My Profile</a></li>
                 <li><a href="/newpost">New Post</a></li>
 
                 <li class="nav-profile">
@@ -466,21 +476,31 @@
             </div>
 
             <div class="profile-stats">
-
                 <ul>
                     <li><span class="profile-stat-count">{{user_posts_length}}</span> posts</li>
-
-                    {% if user_followers_count == 0 or user_followers_count == 1 %}
+            
+                    {% if user_followers_count == 0 %}
                     <li><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
+                    {% elif user_followers_count == 1 %}
+                    <a href="/usersfollowers?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
+                        <li><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
+                    </a>
                     {% else %}
-                    <li><span class="profile-stat-count">{{user_followers_count}}</span> followers</li>
+                    <a href="/usersfollowers?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
+                        <li><span class="profile-stat-count">{{user_followers_count}}</span> followers</li>
+                    </a>
                     {% endif %}
-
-
-                    <li><span class="profile-stat-count">{{user_following_count}}</span> following</li>
+            
+                    {% if user_following_count == 0 %}
+                    <li style="margin-left: 30px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
+                    {% else %}
+                    <a href="/usersfollowing?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
+                        <li style="margin-left: 30px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
+                    </a>
+                    {% endif %}
                 </ul>
-
             </div>
+            
 
             <div class="profile-bio">
 
@@ -488,7 +508,7 @@
                     <span class="profile-real-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</span><br>
                     {{ user_profile.bio }}
                 </p>
-                
+
 
 
             </div>
@@ -502,26 +522,27 @@
 
 
                 <div style="margin-left: 110%;">
-                    <button type="submit" id="submit-button" class="button bg-blue-700 text-blue-700">{{button_text}}</button>
+                    <button type="submit" id="submit-button"
+                        class="button bg-blue-700 text-blue-700">{{button_text}}</button>
                 </div>
             </form>
             {% endif %}
-            
 
-            
+
+
         </div>
 
-        
-       
 
-        
+
+
+
         <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
 
-        
+
             <div class="space-y-5 flex-shrink-0 lg:w-8/12">
                 {% for story in user_posts %}
 
-                    <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
+                <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
 
                     <!-- post header-->
                     <div class="flex justify-between items-center px-4 py-2">
@@ -531,74 +552,76 @@
                                 <img src="{{ user_profile.profile_image.url }}"
                                     class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                 {% else %}
-                                <img src="/media/blank-profile-picture.png" class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                <img src="/media/blank-profile-picture.png"
+                                    class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                 {% endif %}
                             </div>
                             <span class="block font-semibold">{{story.user.username}}</span>
                         </div>
                         {% if user_profile == current_profile %}
                         <div>
-                            <a href="/delete-story?story_id={{ story.id }}" class="flex items-center px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-500 rounded-md">
+                            <a href="/delete-story?story_id={{ story.id }}"
+                                class="flex items-center px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-500 rounded-md">
                                 <i class="uil-trash-alt mr-1"></i> Delete Post
-                            </a>                            
+                            </a>
                         </div>
                         {% endif %}
-                       
-                        
+
+
                     </div>
                     <hr style="margin: 0 10px; border: none; border-top: 2px solid #000000; height: 0;">
 
-                            <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Title:</span> {{ story.title}}
-                                </p>
-                            </div>
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Title:</span> {{ story.title}}
+                            </p>
                         </div>
+                    </div>
 
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Timeframe:</span>
-                                    {% if story.date_format == 1 %}
-                                    {{ story.date_exact }}
-                                    {% elif story.date_format == 2 %}
-                                    {{ story.date_range_start }} - {{ story.date_range_end }}
-                                    {% elif story.date_format == 3 %}
-                                    {{ story.decade }}
-                                    {% endif %}
-                                </p>
-                            </div>
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Timeframe:</span>
+                                {% if story.date_format == 1 %}
+                                {{ story.date_exact }}
+                                {% elif story.date_format == 2 %}
+                                {{ story.date_range_start }} - {{ story.date_range_end }}
+                                {% elif story.date_format == 3 %}
+                                {{ story.decade }}
+                                {% endif %}
+                            </p>
                         </div>
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-2">
-                                <span style="font-weight: 600;">Tags:</span>
-                                <div class="tag-container" style="font-size: 12px;">
-                                    {% for tag in story.tags.all %}
-                                    <div class="tag" style="background-color: grey; padding: 2px 6px;">
-                                        <p style="color: white; margin: 0;">{{ tag.name }}</p>
-                                    </div>
-                                    {% endfor %}
+                    </div>
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-2">
+                            <span style="font-weight: 600;">Tags:</span>
+                            <div class="tag-container" style="font-size: 12px;">
+                                {% for tag in story.tags.all %}
+                                <div class="tag" style="background-color: grey; padding: 2px 6px;">
+                                    <p style="color: white; margin: 0;">{{ tag.name }}</p>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
-                        
+                    </div>
 
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    {% if story.locations.count > 2 %}
-                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
-                                    and
-                                    {{ story.locations.count|add:"-1" }} other locations
-                                    {% else %}
-                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
-                                    {% endif %}
-                                </p>
-                            </div>
+
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                {% if story.locations.count > 2 %}
+                                <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                                and
+                                {{ story.locations.count|add:"-1" }} other locations
+                                {% else %}
+                                <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
+                                {% endif %}
+                            </p>
                         </div>
+                    </div>
 
-                        <a href="/postdetailed?story_id={{story.id}}&profile_id={{user_profile.id}}"
+                    <a href="/postdetailed?story_id={{story.id}}&profile_id={{user_profile.id}}"
                         style="text-decoration: none; color: inherit;">
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
@@ -609,148 +632,150 @@
                             </div>
                         </div>
                     </a>
-                    
 
 
-                        {% if story.files.all %}
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Files:</span>
-                            </div>
+
+                    {% if story.files.all %}
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <span style="font-weight: 600;">Files:</span>
                         </div>
-                        <div uk-lightbox class="flex justify-between items-center px-4 py-1">
-                            <div style="display: flex; gap: 10px;">
-                                {% for file in story.files.all %}
-                                <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
-                                        <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
-                                    </a>
-                                </p>
-                                {% endfor %}
-                            </div>
+                    </div>
+                    <div uk-lightbox class="flex justify-between items-center px-4 py-1">
+                        <div style="display: flex; gap: 10px;">
+                            {% for file in story.files.all %}
+                            <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
+                                    <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
+                                </a>
+                            </p>
+                            {% endfor %}
                         </div>
+                    </div>
+                    {% endif %}
+
+
+
+                    <div class="py-3 px-4 space-y-3">
+
+                        <div class="flex space-x-4 lg:font-bold">
+                            <!-- Like Post -->
+                            <a href="/like-post?story_id={{ story.id }}{% if profile %}&profile_id={{ user_profile.id }}{% endif %}"
+                                class="flex items-center space-x-2">
+                                <div
+                                    class="p-2 rounded-full text-black{% if story.is_liked_by_current_user %} text-red-500{% endif %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        width="25" height="25">
+                                        <path
+                                            d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                    </svg>
+                                </div>
+
+
+                            </a>
+
+
+
+
+                        </div>
+                        <div class="flex space-x-4 lg:font-bold">
+                            {% if story.no_of_likes > 0 %}
+                            <a href="/usersliked?story_id={{story.id}}&profile_id={{user_profile.id}}">
+                                {% endif %}
+                                {% if story.no_of_likes > 2 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
+                                {% elif story.no_of_likes > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 likes</span>
+                                {% endif %}
+                                {% if story.no_of_likes > 0 %}
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="flex space-x-4 lg:font-bold">
+                            {% if story.no_of_comments > 0 %}
+                            <a href="/userscommented?story_id={{story.id}}&profile_id={{user_profile.id}}"">
+                                    {% endif %}
+                                    {% if story.no_of_comments > 2 %}
+                                    <span style=" font-weight: 600; color: #000;">{{story.no_of_comments}}
+                                comments</span>
+                                {% elif story.no_of_comments > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
+                                    comments</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 comments</span>
+                                {% endif %}
+                                {% if story.no_of_comments > 0 %}
+                            </a>
+                            {% endif %}
+
+                            {% if user_profile == current_profile %}
+                            <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                                class="flex items-center space-x-2 flex-1 justify-end">
+                                <p style="font-weight: 600; color: black; text-decoration: none;">See Details &rarr;</p>
+                            </a>
+                            {% endif %}
+
+
+                        </div>
+                        {% if not user_profile == current_profile %}
+                        <form action="/comment-post" method="POST" id="my-form">
+                            {% csrf_token %}
+
+                            <div class="comment-section">
+                                <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
+                                <textarea id="comment" name="comment" rows="4" cols="50"
+                                    placeholder="Type your comment here"
+                                    oninput="checkCharacterLimit(this, 255)"></textarea>
+                                <p id="character-count">*255 characters remaining</p>
+                                <script>
+                                    function checkCharacterLimit(textarea, limit) {
+                                        var count = textarea.value.length;
+                                        var remaining = limit - count;
+                                        var countElement = document.getElementById("character-count");
+
+                                        if (remaining >= 0) {
+                                            countElement.innerHTML = remaining + " characters remaining";
+                                            countElement.style.color = ""; // Reset the color
+                                        } else {
+                                            countElement.innerHTML = "*Exceeded the character limit!";
+                                            countElement.style.color = "red"; // Set the color to red
+                                            textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
+                                            textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
+                                            textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
+                                            // You can also disable the submit button or show an error message here
+                                        }
+                                    }
+                                </script>
+
+
+                                <input type="hidden" name="story_id" value="{{ story.id }}">
+                                <br />
+                                <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
+                                    <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
+                                </div>
+
+                                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                                    class="flex items-center space-x-2 flex-1 justify-end"
+                                    style="text-decoration: none; color: inherit;">
+                                    <p style="font-weight: 600;">See Details &rarr;</p>
+                                </a>
+
+
+
+                            </div>
+
+
+                        </form>
                         {% endif %}
 
 
 
-                        <div class="py-3 px-4 space-y-3">
-
-                            <div class="flex space-x-4 lg:font-bold">
-                                <!-- Like Post -->
-                                <a href="/like-post?story_id={{ story.id }}{% if profile %}&profile_id={{ user_profile.id }}{% endif %}"
-                                    class="flex items-center space-x-2">
-                                    <div
-                                        class="p-2 rounded-full text-black{% if story.is_liked_by_current_user %} text-red-500{% endif %}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                            width="25" height="25">
-                                            <path
-                                                d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                        </svg>
-                                    </div>
-
-
-                                </a>
-
-
-
-
-                            </div>
-                            <div class="flex space-x-4 lg:font-bold">
-                                {% if story.no_of_likes > 0 %}
-                                <a href="/usersliked?story_id={{story.id}}&profile_id={{user_profile.id}}">
-                                    {% endif %}
-                                    {% if story.no_of_likes > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% elif story.no_of_likes > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 likes</span>
-                                    {% endif %}
-                                    {% if story.no_of_likes > 0 %}
-                                </a>
-                                {% endif %}
-                            </div>
-                            <div class="flex space-x-4 lg:font-bold">
-                                {% if story.no_of_comments > 0 %}
-                                <a href="/userscommented?story_id={{story.id}}&profile_id={{user_profile.id}}"">
-                                    {% endif %}
-                                    {% if story.no_of_comments > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% elif story.no_of_comments > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 comments</span>
-                                    {% endif %}
-                                    {% if story.no_of_comments > 0 %}
-                                </a>
-                                {% endif %}
-
-                                {% if user_profile == current_profile %}
-                                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}" class="flex items-center space-x-2 flex-1 justify-end">
-                                    <p style="font-weight: 600; color: black; text-decoration: none;">See Details &rarr;</p>
-                                </a>
-                                {% endif %}
-                                
-                              
-                            </div>
-                            {% if not user_profile == current_profile %}
-                                <form action="/comment-post" method="POST" id="my-form">
-                                    {% csrf_token %}
-            
-                                    <div class="comment-section">
-                                        <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
-                                        <textarea id="comment" name="comment" rows="4" cols="50"
-                                            placeholder="Type your comment here"
-                                            oninput="checkCharacterLimit(this, 255)"></textarea>
-                                        <p id="character-count">*255 characters remaining</p>
-                                        <script>
-                                            function checkCharacterLimit(textarea, limit) {
-                                                var count = textarea.value.length;
-                                                var remaining = limit - count;
-                                                var countElement = document.getElementById("character-count");
-            
-                                                if (remaining >= 0) {
-                                                    countElement.innerHTML = remaining + " characters remaining";
-                                                    countElement.style.color = ""; // Reset the color
-                                                } else {
-                                                    countElement.innerHTML = "*Exceeded the character limit!";
-                                                    countElement.style.color = "red"; // Set the color to red
-                                                    textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
-                                                    textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
-                                                    textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
-                                                    // You can also disable the submit button or show an error message here
-                                                }
-                                            }
-                                        </script>
-            
-            
-                                        <input type="hidden" name="story_id" value="{{ story.id }}">
-                                        <br />
-                                        <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
-                                            <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
-                                        </div>
-
-                                        <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
-                                        class="flex items-center space-x-2 flex-1 justify-end" style="text-decoration: none; color: inherit;">
-                                         <p style="font-weight: 600;">See Details &rarr;</p>
-                                     </a>
-                                     
-
-
-                                    </div>
-            
-            
-                                </form>
-                            {% endif %}
-
-
-
-                        </div>
-
                     </div>
-               
-                
+
+                </div>
+
+
                 {% endfor %}
             </div>
 
