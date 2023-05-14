@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import File, Profile, Story, Tag, Like, Comment
+from .models import File, Profile, Story, Tag, Like, Comment, Follower
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 from opencage.geocoder import OpenCageGeocode
@@ -178,18 +178,41 @@ def comment_post(request):
     else:
         return redirect('/')
 
+
 @login_required(login_url='signin')
 def delete_story(request):
     story_id = request.GET.get('story_id')
-    story= Story.objects.get(id=story_id)
+    story = Story.objects.get(id=story_id)
     if story.user == request.user:
-       story.delete()
-           
+        story.delete()
+
     current_page = request.META.get('HTTP_REFERER')
     if current_page:
         return HttpResponseRedirect(current_page)
     else:
-        return redirect('/')   
+        return redirect('/')
+
+
+@login_required(login_url='signin')
+def follow(request):
+    if request.method == 'POST':
+        follower_username = request.POST['follower']
+        user_username = request.POST['user']
+
+        follower = User.objects.get(username=follower_username)
+        user = User.objects.get(username=user_username)
+
+        if Follower.objects.filter(follower=follower, user=user).exists():
+            delete_follower = Follower.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect('/profile/' + user.username)
+        else:
+            new_follower = Follower.objects.create(follower=follower, user=user)
+            return redirect('/profile/' + user.username)
+
+    else:
+        return redirect('/')
+
 
 def signup(request):
     if request.method == 'POST':

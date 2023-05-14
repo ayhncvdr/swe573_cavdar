@@ -412,6 +412,7 @@
                 }
             }
         }
+        
     </style>
     <title>Profile - {{user_profile.user.username}}</title>
 
@@ -437,7 +438,7 @@
                     <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
                         <ul>
                             <li><a href="/settings"> Account setting </a> </li>
-                            <li><a href="logout"> Log Out</a></li>
+                            <li><a href="/logout"> Log Out</a></li>
                         </ul>
                     </div>
 
@@ -485,7 +486,26 @@
 
             </div>
 
+            {% if not user_profile == current_profile %}
+            <form action="/follow" method="POST">
+                {% csrf_token %}
+
+                <input type="hidden" value="{{ current_user }}" name="follower">
+                <input type="hidden" value="{{ user_object }}" name="user">
+
+
+                <div style="margin-left: 110%;">
+                    <button type="submit" id="submit-button" class="button bg-blue-700 text-blue-700">Follow</button>
+                </div>
+            </form>
+            {% endif %}
+            
+
+            
         </div>
+
+        
+       
 
         
         <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
