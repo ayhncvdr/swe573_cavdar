@@ -368,6 +368,7 @@
                     </div>
                     {% endif %}
 
+                    {% if not story.user.username == user_profile.username %}
                     <form action="/comment-post" method="POST" id="my-form">
                         {% csrf_token %}
 
@@ -407,7 +408,7 @@
 
 
                     </form>
-
+                    {% endif %}
 
 
 
@@ -708,6 +709,9 @@
                     </div>
                     {% endif %}
 
+                    {% if not story.user.username == user_profile.username %}
+
+
                     <form action="/comment-post" method="POST" id="my-form">
                         {% csrf_token %}
 
@@ -747,6 +751,7 @@
 
 
                     </form>
+                    {% endif %}
 
                 </div>
 
