@@ -35,6 +35,11 @@
     <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.6.22/js/uikit.min.js"></script>
 
     <style>
         .tag-container {
@@ -48,113 +53,421 @@
             font-weight: normal;
             margin-right: 8px;
         }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-image {
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+        }
+
+        .profile-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+
+        /* Base Styles */
+
+        :root {
+            font-size: 10px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Open Sans", Arial, sans-serif;
+            min-height: 100vh;
+            background-color: #fafafa;
+            color: #262626;
+            padding-bottom: 3rem;
+        }
+
+        img {
+            display: block;
+        }
+
+        .container {
+            max-width: 93.5rem;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            font: inherit;
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn:focus {
+            outline: 0.5rem auto #4d90fe;
+        }
+
+        .visually-hidden {
+            position: absolute !important;
+            height: 1px;
+            width: 1px;
+            overflow: hidden;
+            clip: rect(1px, 1px, 1px, 1px);
+        }
+
+        /* Profile Section */
+
+        .profile {
+            padding: 5rem 0;
+        }
+
+        .profile::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .profile-image {
+            float: left;
+            width: calc(33.333% - 1rem);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 3rem;
+        }
+
+        .profile-image img {
+            border-radius: 50%;
+        }
+
+        .profile-user-settings,
+        .profile-stats,
+        .profile-bio {
+            float: left;
+            width: calc(66.666% - 2rem);
+        }
+
+        .profile-user-settings {
+            margin-top: 1.1rem;
+        }
+
+        .profile-user-name {
+            display: inline-block;
+            font-size: 3.2rem;
+            font-weight: 300;
+        }
+
+        .profile-edit-btn {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            border: 0.1rem solid #dbdbdb;
+            border-radius: 0.3rem;
+            padding: 0 2.4rem;
+            margin-left: 2rem;
+        }
+
+        .profile-settings-btn {
+            font-size: 2rem;
+            margin-left: 1rem;
+        }
+
+        .profile-stats {
+            margin-top: 2.3rem;
+        }
+
+        .profile-stats li {
+            display: inline-block;
+            font-size: 1.6rem;
+            line-height: 1.5;
+            margin-right: 4rem;
+            cursor: pointer;
+        }
+
+        .profile-stats li:last-of-type {
+            margin-right: 0;
+        }
+
+        .profile-bio {
+            font-size: 1.6rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-top: 2.3rem;
+        }
+
+        .profile-real-name,
+        .profile-stat-count,
+        .profile-edit-btn {
+            font-weight: 600;
+        }
+
+        /* Gallery Section */
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -1rem -1rem;
+            padding-bottom: 3rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            flex: 1 0 22rem;
+            margin: 1rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover .gallery-item-info,
+        .gallery-item:focus .gallery-item-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item-info {
+            display: none;
+        }
+
+        .gallery-item-info li {
+            display: inline-block;
+            font-size: 1.7rem;
+            font-weight: 600;
+        }
+
+        .gallery-item-likes {
+            margin-right: 2.2rem;
+        }
+
+        .gallery-item-type {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2.5rem;
+            text-shadow: 0.2rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1);
+        }
+
+        .fa-clone,
+        .fa-comment {
+            transform: rotateY(180deg);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Loader */
+
+        .loader {
+            width: 5rem;
+            height: 5rem;
+            border: 0.6rem solid #999;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: loader 500ms linear infinite;
+        }
+
+        /* Media Query */
+
+        @media screen and (max-width: 40rem) {
+            .profile {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 4rem 0;
+            }
+
+            .profile::after {
+                display: none;
+            }
+
+            .profile-image,
+            .profile-user-settings,
+            .profile-bio,
+            .profile-stats {
+                float: none;
+                width: auto;
+            }
+
+            .profile-image img {
+                width: 7.7rem;
+            }
+
+            .profile-user-settings {
+                flex-basis: calc(100% - 10.7rem);
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+
+            .profile-user-name {
+                font-size: 2.2rem;
+            }
+
+            .profile-edit-btn {
+                order: 1;
+                padding: 0;
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+            .profile-edit-btn {
+                margin-left: 0;
+            }
+
+            .profile-bio {
+                font-size: 1.4rem;
+                margin-top: 1.5rem;
+            }
+
+            .profile-edit-btn,
+            .profile-bio,
+            .profile-stats {
+                flex-basis: 100%;
+            }
+
+            .profile-stats {
+                order: 1;
+                margin-top: 1.5rem;
+            }
+
+            .profile-stats ul {
+                display: flex;
+                text-align: center;
+                padding: 1.2rem 0;
+                border-top: 0.1rem solid #dadada;
+                border-bottom: 0.1rem solid #dadada;
+            }
+
+            .profile-stats li {
+                font-size: 1.4rem;
+                flex: 1;
+                margin: 0;
+            }
+
+            .profile-stat-count {
+                display: block;
+            }
+        }
+
+        /* Spinner Animation */
+
+        @keyframes loader {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @supports (display: grid) {
+            .profile {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                grid-template-rows: repeat(3, auto);
+                grid-column-gap: 3rem;
+                align-items: center;
+            }
+
+            .profile-image {
+                grid-row: 1 / -1;
+            }
+
+            .gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+                grid-gap: 2rem;
+            }
+
+            .profile-image,
+            .profile-user-settings,
+            .profile-stats,
+            .profile-bio,
+            .gallery-item,
+            .gallery {
+                width: auto;
+                margin: 0;
+            }
+
+            @media (max-width: 40rem) {
+                .profile {
+                    grid-template-columns: auto 1fr;
+                    grid-row-gap: 1.5rem;
+                }
+
+                .profile-image {
+                    grid-row: 1 / 2;
+                }
+
+                .profile-user-settings {
+                    display: grid;
+                    grid-template-columns: auto 1fr;
+                    grid-gap: 1rem;
+                }
+
+                .profile-edit-btn,
+                .profile-stats,
+                .profile-bio {
+                    grid-column: 1 / -1;
+                }
+
+                .profile-user-settings,
+                .profile-edit-btn,
+                .profile-settings-btn,
+                .profile-bio,
+                .profile-stats {
+                    margin: 0;
+                }
+            }
+        }
     </style>
 
 </head>
 
 <body>
 
-    <header>
-        <div class="header_inner">
-            <!-- <form action="/search" method="POST">
-                {% csrf_token %}
-                <div class="left-side">
+    <nav class="navbar navbar-default" style="height: fit-content;">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <a href="/" class="navbar-brand"
+                style="font-style: italic; font-weight: bold; font-size: large; text-decoration: none;">
+                Memorycloud</a>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="">Discover</a></li>
+                <li><a href="/profile/{{user_profile.username}}">My Profile</a></li>
+                <li><a href="/newpost">New Post</a></li>
 
-
-                   <div class="triger" uk-toggle="target: #wrapper ; cls: sidebar-active">
-                             <i class="uil-bars"></i>
-                         </div>
-
-                    <div class="header_search"> 
-                    <input type="text" name="username" placeholder="Search for username..">&nbsp; &nbsp;
-                    <button type="submit"><i class="fa fa-search fa-1x"></i></button>
-                     </div> 
-
-                </div>
-            </form> -->
-            <div class="left-side">
-                <a href="" style="font-style: italic; font-weight: bold; font-size: large;"> Memorycloud</a>
-
-            </div>
-
-            <div class="right-side lg:pr-4">
-                <!-- upload -->
-                <a href="/newpost"
-                    class="bg-pink-500 flex font-bold hover:bg-pink-600 hover:text-white inline-block items-center max-h-10 mr-4 px-4 py-2 rounded shadow text-white">
-                    <ion-icon name="add-circle" class="-mb-1 mr-1 opacity-90 text-xl uilus-circle"></ion-icon> New Story
-                </a>
-
-                <!-- upload dropdown box -->
-                <!-- Notification -->
-
-                <!-- <a href="#" class="header-links-item">
-                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M12 22a2.02 2.02 0 0 1-2.01-2h4a2.02 2.02 0 0 1-.15.78a2.042 2.042 0 0 1-1.44 1.18h-.047A1.922 1.922 0 0 1 12 22zm8-3H4v-2l2-1v-5.5a8.065 8.065 0 0 1 .924-4.06A4.654 4.654 0 0 1 10 4.18V2h4v2.18c2.579.614 4 2.858 4 6.32V16l2 1v2z" fill="currentColor"/></g></svg>
-                         </a>
-                         <div uk-drop="mode: click;offset: 4" class="header_dropdown">
-                             <h4
-                                 class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
-                                 Notification </h4>
-                             <ul class="dropdown_scrollbar" data-simplebar>
-                                 <li>
-                                     <a href="#">
-                                         <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                         </div>
-                                         <div class="drop_content">
-                                             <p> <strong class="text-link" >Taiye</strong>  
-                                                 <span class="text-link"> is following you  </span>
-                                             </p>
-                                             <span class="time-ago"> 2 hours ago </span>
-                                         </div>
-                                     </a>
-                                 </li>
-                                 
- 
-                             </ul>
-                             <a href="#" class="see-all">See all</a>
-                         </div> -->
-
-                <!-- Messages -->
-
-                <!-- <a href="#" class="header-links-item">
-                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="0.5em" height="0.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><g fill="currentColor"><path d="M2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2.5a1 1 0 0 1 .8.4l1.9 2.533a1 1 0 0 0 1.6 0l1.9-2.533a1 1 0 0 1 .8-.4H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></g></svg>
-                         </a>
-                         <div uk-drop="mode: click;offset: 4" class="header_dropdown">
-                             <h4
-                                 class="-mt-5 -mx-5 bg-gradient-to-t from-gray-100 to-gray-50 border-b font-bold px-6 py-3">
-                                 Messages </h4>
-                             <ul class="dropdown_scrollbar" data-simplebar>
-                                 <li>
-                                     <a href="#">
-                                         <div class="drop_avatar"> <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="">
-                                         </div>
-                                         <div class="drop_content">
-                                             <strong> Taiye </strong> <time> 6:43 PM</time>
-                                             <p> hi tomi </p>
-                                         </div>
-                                     </a>
-                                 </li>
-                                 
- 
- 
-                             </ul>
-                             <a href="#" class="see-all">See all</a>
-                         </div> -->
-
-                <!-- profile -->
-
-                <a href="#">
-                    <img src="{{user_profile.profile_image.url|slice:'1:'}}" class="header-avatar" alt="">
-                </a>
-                <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
-                    <ul>
-                        <li><a href="/settings"> Account setting </a> </li>
-                        <li><a href="logout"> Log Out</a></li>
-                    </ul>
-                </div>
-
-            </div>
+                <li class="nav-profile">
+                    <a href="">
+                        {% if user_profile.profile_image.url %}
+                        <img src="{{ user_profile.profile_image.url }}" class="profile-image">
+                        {% else %}
+                        <img src="/media/blank-profile-picture.png" class="profile-image">
+                        {% endif %}
+                    </a>
+                    <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
+                        <ul>
+                            <li><a href="/settings"> Account setting </a> </li>
+                            <li><a href="logout"> Log Out</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
         </div>
-    </header>
+    </nav>
+
 
     <div class="container m-auto">
 
@@ -163,560 +476,237 @@
         <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
 
             <!-- left sidebar-->
-            <div class="space-y-5 flex-shrink-0 lg:w-7/12">
-
-                <!-- post 1-->
-
+            <div class="space-y-5 flex-shrink-0 lg:w-8/12">
                 {% for story, profile in story_profile_list %}
-                {% if profile %}
-                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}">
-                    <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
 
-                        <!-- post header-->
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-2">
-                                <a href="/profile/{{story.user}}">
-                                    <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
-                                        {% if profile.profile_image.url %}
-                                        <img src="{{ profile.profile_image.url }}"
-                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
-                                        {% else %}
-                                        <img src="/media/blank-profile-picture.png"
-                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
-                                        {% endif %}
-                                    </div>
-                                </a>
+                <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
 
-                                <span class="block font-semibold"><a
-                                        href="/profile/{{story.user}}">{{story.user}}</a></span>
-                            </div>
-                        </div>
-                        <hr
-                            style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Title:</span> {{ story.title}}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Timeframe:</span>
-                                    {% if story.date_format == 1 %}
-                                    {{ story.date_exact }}
-                                    {% elif story.date_format == 2 %}
-                                    {{ story.date_range_start }} - {{ story.date_range_end }}
-                                    {% elif story.date_format == 3 %}
-                                    {{ story.decade }}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Tags:</span>
-                                <div class="tag-container">
-                                    {% for tag in story.tags.all %}
-                                    <div class="tag" style="background-color: grey">
-                                        <p style="color: white;">{{ tag.name }}</p>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    {% if story.locations.count > 2 %}
-                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
-                                    and
-                                    {{ story.locations.count|add:"-1" }} other locations
+                    <!-- post header-->
+                    <div class="flex justify-between items-center px-4 py-2">
+                        <div class="flex flex-1 items-center space-x-2 space-y-0">
+                            <a href="/profile/{{ story.user.username }}" class="profile-link">
+                                <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                    {% if profile.profile_image.url %}
+                                    <img src="{{ profile.profile_image.url }}"
+                                        class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                     {% else %}
-                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
+                                    <img src="/media/blank-profile-picture.png"
+                                        class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                     {% endif %}
-                                </p>
-                            </div>
-                        </div>
-
-                        {% if profile %}
-                        <a href="/postdetailed?story_id={{story.id}}&profile_id={{profile.id}}">
-                            <div class="flex justify-between items-center px-4 py-1">
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <p style="word-break: break-all; white-space: normal;">
-                                        <span style="font-weight: 600;">Content:</span>
-                                        {{ story.content|truncatechars:500 }}
-                                    </p>
                                 </div>
-                            </div>
-                        </a>
-                        {% else %}
-                        <a href="/postdetailed?story_id={{story.id}}">
-                            <div class="flex justify-between items-center px-4 py-1">
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <p style="word-break: break-all; white-space: normal;">
-                                        <span style="font-weight: 600;">Content:</span>
-                                        {{ story.content|truncatechars:500 }}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                        {% endif %}
-
-                        {% if story.files.all %}
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Files:</span>
-                            </div>
+                            </a>
+                            <a href="/profile/{{ story.user.username }}"
+                                class="block font-semibold profile-link">{{story.user.username}}</a>
                         </div>
-                        <div uk-lightbox class="flex justify-between items-center px-4 py-1">
-                            <div style="display: flex; gap: 10px;">
-                                {% for file in story.files.all %}
-                                <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
-                                        <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
-                                    </a>
-                                </p>
+                    </div>
+                    <hr style="margin: 0 10px; border: none; border-top: 2px solid #000000; height: 0;">
+
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Title:</span> {{ story.title}}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                <span style="font-weight: 600;">Timeframe:</span>
+                                {% if story.date_format == 1 %}
+                                {{ story.date_exact }}
+                                {% elif story.date_format == 2 %}
+                                {{ story.date_range_start }} - {{ story.date_range_end }}
+                                {% elif story.date_format == 3 %}
+                                {{ story.decade }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-2">
+                            <span style="font-weight: 600;">Tags:</span>
+                            <div class="tag-container" style="font-size: 12px;">
+                                {% for tag in story.tags.all %}
+                                <div class="tag" style="background-color: grey; padding: 2px 6px;">
+                                    <p style="color: white; margin: 0;">{{ tag.name }}</p>
+                                </div>
                                 {% endfor %}
                             </div>
                         </div>
-                        {% endif %}
+                    </div>
 
 
-
-                        <div class="py-3 px-4 space-y-3">
-
-                            <div class="flex space-x-4 lg:font-bold">
-                                <!-- Like Post -->
-                                <a href="/like-post?story_id={{ story.id }}{% if profile %}&profile_id={{ profile.id }}{% endif %}"
-                                    class="flex items-center space-x-2">
-                                    <div
-                                        class="p-2 rounded-full text-black{% if story.is_liked_by_current_user %} text-red-500{% endif %}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                            width="25" height="25">
-                                            <path
-                                                d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                        </svg>
-                                    </div>
-
-
-                                </a>
-
-
-
-
-                            </div>
-                            <div class="flex space-x-4 lg:font-bold">
-                                {% if story.no_of_likes > 0 %}
-                                <a href="/usersliked?story_id={{story.id}}&profile_id={{profile.id}}">
-                                    {% endif %}
-                                    {% if story.no_of_likes > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% elif story.no_of_likes > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 likes</span>
-                                    {% endif %}
-                                    {% if story.no_of_likes > 0 %}
-                                </a>
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <p style="word-break: break-all; white-space: normal;">
+                                {% if story.locations.count > 2 %}
+                                <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
+                                and
+                                {{ story.locations.count|add:"-1" }} other locations
+                                {% else %}
+                                <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
                                 {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <a href="/postdetailed?story_id={{story.id}}&profile_id={{user_profile.id}}"
+                        style="text-decoration: none; color: inherit;">
+                        <div class="flex justify-between items-center px-4 py-1">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <p style="word-break: break-all; white-space: normal;">
+                                    <span style="font-weight: 600;">Content:</span>
+                                    {{ story.content|truncatechars:500 }}
+                                </p>
                             </div>
-                            <div class="flex space-x-4 lg:font-bold">
-                                {% if story.no_of_comments > 0 %}
-                                <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}"">
+                        </div>
+                    </a>
+
+
+
+                    {% if story.files.all %}
+                    <div class="flex justify-between items-center px-4 py-1">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <span style="font-weight: 600;">Files:</span>
+                        </div>
+                    </div>
+                    <div uk-lightbox class="flex justify-between items-center px-4 py-1">
+                        <div style="display: flex; gap: 10px;">
+                            {% for file in story.files.all %}
+                            <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
+                                    <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
+                                </a>
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+
+                    <div class="py-3 px-4 space-y-3">
+
+                        <div class="flex space-x-4 lg:font-bold">
+                            <!-- Like Post -->
+                            <a href="/like-post?story_id={{ story.id }}{% if profile %}&profile_id={{ user_profile.id }}{% endif %}"
+                                class="flex items-center space-x-2">
+                                <div
+                                    class="p-2 rounded-full text-black{% if story.is_liked_by_current_user %} text-red-500{% endif %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        width="25" height="25">
+                                        <path
+                                            d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                    </svg>
+                                </div>
+
+
+                            </a>
+
+
+
+
+                        </div>
+                        <div class="flex space-x-4 lg:font-bold">
+                            {% if story.no_of_likes > 0 %}
+                            <a href="/usersliked?story_id={{story.id}}&profile_id={{user_profile.id}}">
+                                {% endif %}
+                                {% if story.no_of_likes > 2 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
+                                {% elif story.no_of_likes > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 likes</span>
+                                {% endif %}
+                                {% if story.no_of_likes > 0 %}
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div class="flex space-x-4 lg:font-bold">
+                            {% if story.no_of_comments > 0 %}
+                            <a href="/userscommented?story_id={{story.id}}&profile_id={{user_profile.id}}"">
                                     {% endif %}
                                     {% if story.no_of_comments > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% elif story.no_of_comments > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 comments</span>
-                                    {% endif %}
-                                    {% if story.no_of_comments > 0 %}
-                                </a>
+                                    <span style=" font-weight: 600; color: #000;">{{story.no_of_comments}}
+                                comments</span>
+                                {% elif story.no_of_comments > 0 %}
+                                <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
+                                    comments</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #000;">0 comments</span>
                                 {% endif %}
-                              
-                            </div>
-                            <form action="/comment-post" method="POST" id="my-form">
-                                {% csrf_token %}
-        
-                                <div class="comment-section">
-                                    <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
-                                    <textarea id="comment" name="comment" rows="4" cols="50"
-                                        placeholder="Type your comment here"
-                                        oninput="checkCharacterLimit(this, 255)"></textarea>
-                                    <p id="character-count">*255 characters remaining</p>
-                                    <script>
-                                        function checkCharacterLimit(textarea, limit) {
-                                            var count = textarea.value.length;
-                                            var remaining = limit - count;
-                                            var countElement = document.getElementById("character-count");
-        
-                                            if (remaining >= 0) {
-                                                countElement.innerHTML = remaining + " characters remaining";
-                                                countElement.style.color = ""; // Reset the color
-                                            } else {
-                                                countElement.innerHTML = "*Exceeded the character limit!";
-                                                countElement.style.color = "red"; // Set the color to red
-                                                textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
-                                                textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
-                                                textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
-                                                // You can also disable the submit button or show an error message here
-                                            }
-                                        }
-                                    </script>
-        
-        
-                                    <input type="hidden" name="story_id" value="{{ story.id }}">
-                                    <br />
-                                    <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
-                                        <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
-                                    </div>
-                                    {% if profile %}
-                                    <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
-                                        class="flex items-center space-x-2 flex-1 justify-end">
-                                        <p style="font-weight: 600;">See Details &rarr;</p>
-                                    </a>
-                                    {% else %}
-                                    <a href="/postdetailed?story_id={{ story.id }}"
-                                        class="flex items-center space-x-2 flex-1 justify-end">
-                                        <p style="font-weight: 600;">See Details &rarr;</p>
-                                    </a>
-                                    {% endif %}
-                                </div>
-        
-        
-                            </form>
-
-                            <!-- <div class="flex items-center space-x-3"> 
-                                     <div class="flex items-center">
-                                         <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white ">
-                                         <img src="{% static 'assets/images/avatars/avatar-4.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
-                                         <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
-                                     </div>
-                                     <div class="">
-                                         Liked <strong> taiye</strong> and <strong> 209 Others </strong>
-                                     </div>
-                                 </div> -->
-
-                            <!-- <div class="border-t pt-4 space-y-4 ">
-                                     <div class="flex">
-                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
-                                             <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="absolute h-full rounded-full w-full">
-                                         </div>
-                                         <div class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20   ">
-                                             <p class="leading-6">Y'all like billie eillish? <urna class="i uil-heart"></urna> <i
-                                                     class="uil-grin-tongue-wink"> </i> </p>
-                                             <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 "></div>
-                                         </div>
-                                     </div>
-                                     <div class="flex">
-                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
-                                             <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="absolute h-full rounded-full w-full">
-                                         </div>
-                                         <div class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20   ">
-                                             <p class="leading-6">She's my favourite <i class="uil-grin-tongue-wink-alt"></i>
-                                             </p>
-                                             <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 "></div>
-                                         </div>
-                                     </div>
-                                 </div> -->
-
-                            <!-- <div class="bg-gray-100 bg-gray-100 rounded-full rounded-md relative ">
-                                     <input type="text" placeholder="post a comment" class="bg-transparent max-h-10 shadow-none">
-                                     <div class="absolute bottom-0 flex h-full items-center right-0 right-3 text-xl space-x-2">
-                                         <a href="#"> <i class="uil-image"></i></a>
-                                         <a href="#"> <i class="uil-video"></i></a>
-                                     </div>
-                                 </div> -->
-
-                        </div>
-
-                    </div>
-                </a>
-                {% else %}
-                <a href="/postdetailed?story_id={{ story.id }}">
-                    <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
-
-                        <!-- post header-->
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-2">
-                                <a href="#">
-                                    <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
-                                        {% if profile.profile_image.url %}
-                                        <img src="{{ profile.profile_image.url }}"
-                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
-                                        {% else %}
-                                        <img src="/media/blank-profile-picture.png"
-                                            class="bg-gray-200 border border-white rounded-full w-8 h-8">
-                                        {% endif %}
-                                    </div>
-                                </a>
-
-                                <span class="block font-semibold"><a
-                                        href="/profile/{{story.user}}">{{story.user}}</a></span>
-                            </div>
-                        </div>
-                        <hr
-                            style=" margin-left: 2%; margin-right: 2%; border: none; border-top: 2px solid #000000; height: 0;">
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Title:</span> {{ story.title}}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Timeframe:</span>
-                                    {% if story.date_format == 1 %}
-                                    {{ story.date_exact }}
-                                    {% elif story.date_format == 2 %}
-                                    {{ story.date_range_start }} - {{ story.date_range_end }}
-                                    {% elif story.date_format == 3 %}
-                                    {{ story.decade }}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Tags:</span>
-                                <div class="tag-container">
-                                    {% for tag in story.tags.all %}
-                                    <div class="tag" style="background-color: grey">
-                                        <p style="color: white;">{{ tag.name }}</p>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
-                                    {% if story.locations.count > 2 %}
-                                    <span style="font-weight: 600;">Locations:</span> {{ story.locations.first.name }},
-                                    and
-                                    {{ story.locations.count|add:"-1" }} other locations
-                                    {% else %}
-                                    <span style="font-weight: 600;">Location:</span> {{ story.locations.all|join:"; " }}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-
-                        {% if profile %}
-                        <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}">
-                            <div class="flex justify-between items-center px-4 py-1">
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <p style="word-break: break-all; white-space: normal;">
-                                        <span style="font-weight: 600;">Content:</span>
-                                        {{ story.content|truncatechars:500 }}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                        {% else %}
-                        <a href="/postdetailed?story_id={{ story.id }}">
-                            <div class="flex justify-between items-center px-4 py-1">
-                                <div class="flex flex-1 items-center space-x-4">
-                                    <p style="word-break: break-all; white-space: normal;">
-                                        <span style="font-weight: 600;">Content:</span>
-                                        {{ story.content|truncatechars:500 }}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                        {% endif %}
-
-                        {% if story.files.all %}
-                        <div class="flex justify-between items-center px-4 py-1">
-                            <div class="flex flex-1 items-center space-x-4">
-                                <span style="font-weight: 600;">Images:</span>
-                            </div>
-                        </div>
-                        <div uk-lightbox class="flex justify-between items-center px-4 py-1">
-                            <div style="display: flex; gap: 10px;">
-                                {% for file in story.files.all %}
-                                <p style="word-break: break-all; white-space: normal;"> <a href="/media/{{ file }}">
-                                        <img src="/media/{{ file }}" alt="" style="width: 150px; height: auto;">
-                                    </a>
-                                </p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-
-
-                        <div class="py-3 px-4 space-y-3">
-
-                            <div class="flex space-x-4 lg:font-bold">
-                                <!-- Like Post -->
-                                <a href="/like-post?story_id={{ story.id }}{% if profile %}&profile_id={{ profile.id }}{% endif %}"
-                                    class="flex items-center space-x-2">
-                                    <div
-                                        class="p-2 rounded-full text-black{% if story.is_liked_by_current_user %} text-red-500{% endif %}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                            width="25" height="25">
-                                            <path
-                                                d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                        </svg>
-
-                                    </div>
-
-
-
-                                </a>
-
-                            </div>
-                            <div class="flex space-x-4 lg:font-bold">
-                                {% if story.no_of_likes > 0 %}
-                                <a href="/userscommented?story_id={{story.id}}&profile_id={{profile.id}}">
-                                    {% endif %}
-                                    {% if story.no_of_likes > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% elif story.no_of_likes > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_likes}} likes</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 likes</span>
-                                    {% endif %}
-                                    {% if story.no_of_likes > 0 %}
-                                </a>
-                                {% endif %}
-                            </div>
-                            <div class="flex space-x-4 lg:font-bold">
                                 {% if story.no_of_comments > 0 %}
-                                <a href="#">
-                                    {% endif %}
-                                    {% if story.no_of_comments > 2 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% elif story.no_of_comments > 0 %}
-                                    <span style="font-weight: 600; color: #000;">{{story.no_of_comments}}
-                                        comments</span>
-                                    {% else %}
-                                    <span style="font-weight: 600; color: #000;">0 comments</span>
-                                    {% endif %}
-                                    {% if story.no_of_comments > 0 %}
-                                </a>
-                                {% endif %}
-                               
-                            </div>
-                            <form action="/comment-post" method="POST" id="my-form">
-                                {% csrf_token %}
-        
-                                <div class="comment-section">
-                                    <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
-                                    <textarea id="comment" name="comment" rows="4" cols="50"
-                                        placeholder="Type your comment here"
-                                        oninput="checkCharacterLimit(this, 255)"></textarea>
-                                    <p id="character-count">*255 characters remaining</p>
-                                    <script>
-                                        function checkCharacterLimit(textarea, limit) {
-                                            var count = textarea.value.length;
-                                            var remaining = limit - count;
-                                            var countElement = document.getElementById("character-count");
-        
-                                            if (remaining >= 0) {
-                                                countElement.innerHTML = remaining + " characters remaining";
-                                                countElement.style.color = ""; // Reset the color
-                                            } else {
-                                                countElement.innerHTML = "*Exceeded the character limit!";
-                                                countElement.style.color = "red"; // Set the color to red
-                                                textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
-                                                textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
-                                                textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
-                                                // You can also disable the submit button or show an error message here
-                                            }
-                                        }
-                                    </script>
-        
-        
-                                    <input type="hidden" name="story_id" value="{{ story.id }}">
-                                    <br />
-                                    <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
-                                        <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
-                                    </div>
-                                    {% if profile %}
-                                    <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
-                                        class="flex items-center space-x-2 flex-1 justify-end">
-                                        <p style="font-weight: 600;">See Details &rarr;</p>
-                                    </a>
-                                    {% else %}
-                                    <a href="/postdetailed?story_id={{ story.id }}"
-                                        class="flex items-center space-x-2 flex-1 justify-end">
-                                        <p style="font-weight: 600;">See Details &rarr;</p>
-                                    </a>
-                                    {% endif %}
-                                </div>
-                              
-        
-        
-                            </form>
-   
+                            </a>
+                            {% endif %}
 
-                            <!-- <div class="flex items-center space-x-3"> 
-                                     <div class="flex items-center">
-                                         <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white ">
-                                         <img src="{% static 'assets/images/avatars/avatar-4.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
-                                         <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" alt="" class="w-6 h-6 rounded-full border-2 border-white  -ml-2">
-                                     </div>
-                                     <div class="">
-                                         Liked <strong> taiye</strong> and <strong> 209 Others </strong>
-                                     </div>
-                                 </div> -->
+                            {% if user_profile == current_profile %}
+                            <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                                class="flex items-center space-x-2 flex-1 justify-end">
+                                <p style="font-weight: 600; color: black; text-decoration: none;">See Details &rarr;</p>
+                            </a>
+                            {% endif %}
 
-                            <!-- <div class="border-t pt-4 space-y-4 ">
-                                     <div class="flex">
-                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
-                                             <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="absolute h-full rounded-full w-full">
-                                         </div>
-                                         <div class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20   ">
-                                             <p class="leading-6">Y'all like billie eillish? <urna class="i uil-heart"></urna> <i
-                                                     class="uil-grin-tongue-wink"> </i> </p>
-                                             <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 "></div>
-                                         </div>
-                                     </div>
-                                     <div class="flex">
-                                         <div class="w-10 h-10 rounded-full relative flex-shrink-0">
-                                             <img src="{% static 'assets/images/avatars/avatar-1.jpg' %}" alt="" class="absolute h-full rounded-full w-full">
-                                         </div>
-                                         <div class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20   ">
-                                             <p class="leading-6">She's my favourite <i class="uil-grin-tongue-wink-alt"></i>
-                                             </p>
-                                             <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 "></div>
-                                         </div>
-                                     </div>
-                                 </div> -->
-
-                            <!-- <div class="bg-gray-100 bg-gray-100 rounded-full rounded-md relative ">
-                                     <input type="text" placeholder="post a comment" class="bg-transparent max-h-10 shadow-none">
-                                     <div class="absolute bottom-0 flex h-full items-center right-0 right-3 text-xl space-x-2">
-                                         <a href="#"> <i class="uil-image"></i></a>
-                                         <a href="#"> <i class="uil-video"></i></a>
-                                     </div>
-                                 </div> -->
 
                         </div>
+                        {% if not user_profile == current_profile %}
+                        <form action="/comment-post" method="POST" id="my-form">
+                            {% csrf_token %}
+
+                            <div class="comment-section">
+                                <label for="comment" style="font-weight: 600;color: #000;">Leave a comment:</label>
+                                <textarea id="comment" name="comment" rows="4" cols="50"
+                                    placeholder="Type your comment here"
+                                    oninput="checkCharacterLimit(this, 255)"></textarea>
+                                <p id="character-count">*255 characters remaining</p>
+                                <script>
+                                    function checkCharacterLimit(textarea, limit) {
+                                        var count = textarea.value.length;
+                                        var remaining = limit - count;
+                                        var countElement = document.getElementById("character-count");
+
+                                        if (remaining >= 0) {
+                                            countElement.innerHTML = remaining + " characters remaining";
+                                            countElement.style.color = ""; // Reset the color
+                                        } else {
+                                            countElement.innerHTML = "*Exceeded the character limit!";
+                                            countElement.style.color = "red"; // Set the color to red
+                                            textarea.value = textarea.value.substr(0, limit); // Truncate the text to the character limit
+                                            textarea.setAttribute("maxlength", limit); // Set the maxlength attribute to enforce the limit
+                                            textarea.removeEventListener("input", checkCharacterLimit); // Remove the event listener to prevent further input
+                                            // You can also disable the submit button or show an error message here
+                                        }
+                                    }
+                                </script>
+
+
+                                <input type="hidden" name="story_id" value="{{ story.id }}">
+                                <br />
+                                <div class="bg-gray-10 p-6 pt-0 flex flex-col items-center space-y-4">
+                                    <button type="submit" id="submit-button" class="button bg-blue-700">Save</button>
+                                </div>
+
+                                <a href="/postdetailed?story_id={{ story.id }}&profile_id={{ profile.id }}"
+                                    class="flex items-center space-x-2 flex-1 justify-end"
+                                    style="text-decoration: none; color: inherit;">
+                                    <p style="font-weight: 600;">See Details &rarr;</p>
+                                </a>
+
+
+
+                            </div>
+
+
+                        </form>
+                        {% endif %}
+
+
 
                     </div>
-                </a>
-                {% endif %}
+
+                </div>
+
+
                 {% endfor %}
-
-
-
-
             </div>
 
             <!-- right sidebar-->

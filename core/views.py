@@ -277,6 +277,8 @@ def settings(request):
 
 @login_required(login_url='signin')
 def newPost(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
     DATE_FORMAT_MAPPING = {
         'exact_date': 1,
         'date_range': 2,
@@ -444,4 +446,4 @@ def newPost(request):
         print(story)
         return redirect('index')
 
-    return render(request, 'newpost.html')
+    return render(request, 'newpost.html', {'user_profile': user_profile})
