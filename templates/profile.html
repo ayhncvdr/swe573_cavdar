@@ -460,7 +460,7 @@
 
                 <h1 class="profile-user-name">{{user_profile.username}}</h1>
                 {% if user_profile == current_profile %}
-                <a href="/settings" class="btn profile-edit-btn">Edit Profile</a>
+                <a href="/settings" class="btn profile-edit-btn">Account Settings</a>
                 {% endif %}
 
             </div>
@@ -469,8 +469,15 @@
 
                 <ul>
                     <li><span class="profile-stat-count">{{user_posts_length}}</span> posts</li>
-                    <li><span class="profile-stat-count">188</span> followers</li>
-                    <li><span class="profile-stat-count">206</span> following</li>
+
+                    {% if user_followers_count == 0 or user_followers_count == 1 %}
+                    <li><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
+                    {% else %}
+                    <li><span class="profile-stat-count">{{user_followers_count}}</span> followers</li>
+                    {% endif %}
+
+
+                    <li><span class="profile-stat-count">{{user_following_count}}</span> following</li>
                 </ul>
 
             </div>
@@ -495,7 +502,7 @@
 
 
                 <div style="margin-left: 110%;">
-                    <button type="submit" id="submit-button" class="button bg-blue-700 text-blue-700">Follow</button>
+                    <button type="submit" id="submit-button" class="button bg-blue-700 text-blue-700">{{button_text}}</button>
                 </div>
             </form>
             {% endif %}

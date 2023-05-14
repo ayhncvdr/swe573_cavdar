@@ -79,13 +79,31 @@ def profile(request, pk):
     user_posts = Story.objects.filter(user=user_object).order_by('-created_at')
     user_posts_length = len(user_posts)
 
+    follower = current_user
+    user = user_object
+
+    if Follower.objects.filter(follower=follower, user=user).first():
+        button_text = 'Unfollow'
+    else:
+        button_text = 'Follow'
+
+    user_followers = Follower.objects.filter(user=user_object)
+    user_followers_count = len(Follower.objects.filter(user=user_object))
+    user_following = Follower.objects.filter(follower=user_object)
+    user_following_count = len(Follower.objects.filter(follower=user_object))
+
     context = {
         'current_user': current_user,
         'current_profile': current_profile,
         'user_object': user_object,
         'user_profile': user_profile,
         'user_posts': user_posts,
-        'user_posts_length': user_posts_length
+        'user_posts_length': user_posts_length,
+        'button_text': button_text, 
+        'user_followers':user_followers,
+        'user_followers_count':user_followers_count,
+        'user_following':user_following,
+        'user_following_count':user_following_count,
     }
     return render(request, 'profile.html', context)
 
@@ -203,11 +221,13 @@ def follow(request):
         user = User.objects.get(username=user_username)
 
         if Follower.objects.filter(follower=follower, user=user).exists():
-            delete_follower = Follower.objects.get(follower=follower, user=user)
+            delete_follower = Follower.objects.get(
+                follower=follower, user=user)
             delete_follower.delete()
             return redirect('/profile/' + user.username)
         else:
-            new_follower = Follower.objects.create(follower=follower, user=user)
+            new_follower = Follower.objects.create(
+                follower=follower, user=user)
             return redirect('/profile/' + user.username)
 
     else:
