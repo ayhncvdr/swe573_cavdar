@@ -178,6 +178,18 @@ def comment_post(request):
     else:
         return redirect('/')
 
+@login_required(login_url='signin')
+def delete_story(request):
+    story_id = request.GET.get('story_id')
+    story= Story.objects.get(id=story_id)
+    if story.user == request.user:
+       story.delete()
+           
+    current_page = request.META.get('HTTP_REFERER')
+    if current_page:
+        return HttpResponseRedirect(current_page)
+    else:
+        return redirect('/')   
 
 def signup(request):
     if request.method == 'POST':
