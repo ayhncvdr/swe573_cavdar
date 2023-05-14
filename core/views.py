@@ -24,7 +24,11 @@ def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
 
-    stories = Story.objects.exclude(user=user_object).order_by('-created_at')
+    # Get the users you are following
+    following_users = Follower.objects.filter(follower=user_object).values_list('user', flat=True)
+
+    # Get the stories of the following users
+    stories = Story.objects.filter(user__in=following_users).order_by('-created_at')
 
     # Create a list to store tuples of story and profile
     story_profile_list = []
@@ -47,6 +51,45 @@ def index(request):
         'user_object': user_object
     }
     return render(request, 'index.html', context)
+
+@login_required(login_url='signin')
+def discover(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+
+    # Get your posts
+    your_posts = Story.objects.filter(user=user_object)
+
+    # Get the users you are following
+    following_users = Follower.objects.filter(follower=user_object).values_list('user', flat=True)
+
+    # Get the stories of the users you are following
+    following_posts = Story.objects.filter(user__in=following_users)
+
+    # Get all other stories except your posts and the following posts
+    stories = Story.objects.exclude(user=user_object).exclude(user__in=following_users)
+
+    # Create a list to store tuples of story and profile
+    story_profile_list = []
+
+    # Iterate over each story and fetch the profile object
+    for story in stories:
+        user_story_object = User.objects.get(username=story.user.username)
+        likes = Like.objects.filter(story=story)
+        comments = Comment.objects.filter(story=story)
+        try:
+            user_story_profile = Profile.objects.get(user=user_story_object)
+        except Profile.DoesNotExist:
+            user_story_profile = None
+
+        story_profile_list.append((story, user_story_profile))
+
+    context = {
+        'story_profile_list': story_profile_list,
+        'user_profile': user_profile,
+        'user_object': user_object
+    }
+    return render(request, 'discover.html', context)
 
 
 @login_required(login_url='signin')
