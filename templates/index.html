@@ -433,6 +433,15 @@
                 }
             }
         }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input[type="text"] {
+            margin-right: 10px;
+        }
+
     </style>
 
 </head>
@@ -441,32 +450,43 @@
 
     <nav class="navbar navbar-default" style="height: fit-content;">
         <div class="container-fluid d-flex justify-content-center align-items-center">
-            <a href="/" class="navbar-brand"
-                style="font-style: italic; font-weight: bold; font-size: large; text-decoration: none;">
-                Memorycloud</a>
+            <a href="/" class="navbar-brand" style="font-style: italic; font-weight: bold; font-size: large; text-decoration: none;">
+                Memorycloud
+            </a>
+
+            <ul class="nav navbar-left">
+                <form action="{% url 'search' %}" method="GET" style="width: min-content;">
+                    <div class="search-container" style="width: min-content;">
+                        <input type="text" name="query" placeholder="Search for user and story..." style="width: 300px;">
+                        <button type="submit"><i class="fa fa-search fa-1x"></i></button>
+                    </div>
+                </form>
+            </ul>
+
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/discover">Discover</a></li>
                 <li><a href="/profile/{{user_profile.username}}">My Profile</a></li>
                 <li><a href="/newpost">New Post</a></li>
-    
                 <li class="nav-profile d-flex align-items-center">
                     <a href="">
                         {% if user_profile.profile_image.url %}
-                        <img src="{{ user_profile.profile_image.url }}" class="profile-image" style="height:25px ; width: 25px;">
+                        <img src="{{ user_profile.profile_image.url }}" class="profile-image" style="height:25px; width:25px;">
                         {% else %}
-                        <img src="/media/blank-profile-picture.png" class="profile-image" style="height:25px ; width: 25px;">
+                        <img src="/media/blank-profile-picture.png" class="profile-image" style="height:25px; width:25px;">
                         {% endif %}
                     </a>
                     <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
                         <ul>
-                            <li><a href="/settings"> Account setting </a> </li>
-                            <li><a href="logout"> Log Out</a></li>
+                            <li><a href="/settings">Account Setting</a></li>
+                            <li><a href="/logout">Log Out</a></li>
                         </ul>
                     </div>
                 </li>
             </ul>
         </div>
     </nav>
+    
+    
     
 
 
