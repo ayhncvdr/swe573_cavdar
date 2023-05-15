@@ -168,7 +168,12 @@ def profile(request, pk):
     current_user = User.objects.get(username=request.user.username)
     current_profile = Profile.objects.get(user=current_user)
     user_object = User.objects.get(username=pk)
-    user_profile = Profile.objects.get(user=user_object)
+    try:
+        user_profile = Profile.objects.get(user=user_object)
+    except Profile.DoesNotExist:
+        user_profile = None
+        # Handle the profile not found case, e.g., display an error message or redirect to a different page
+
     user_posts = Story.objects.filter(user=user_object).order_by('-created_at')
     user_posts_length = len(user_posts)
 
@@ -181,9 +186,9 @@ def profile(request, pk):
         button_text = 'Follow'
 
     user_followers = Follower.objects.filter(user=user_object)
-    user_followers_count = len(Follower.objects.filter(user=user_object))
+    user_followers_count = len(user_followers)
     user_following = Follower.objects.filter(follower=user_object)
-    user_following_count = len(Follower.objects.filter(follower=user_object))
+    user_following_count = len(user_following)
 
     context = {
         'current_user': current_user,
@@ -199,7 +204,6 @@ def profile(request, pk):
         'user_following_count': user_following_count,
     }
     return render(request, 'profile.html', context)
-
 
 @login_required(login_url='signin')
 def usersFollowers(request):

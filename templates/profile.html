@@ -477,14 +477,17 @@
         <div class="profile">
 
             <div class="profile-image">
-
+                {% if user_profile.profile_image.url %}
                 <img src="{{user_profile.profile_image.url}}" style="height:125px ; width: 125px;" alt="">
+                {% else %}
+                <img src="/media/blank-profile-picture.png" style="height:125px ; width: 125px;" alt="">
+                {% endif %}
 
             </div>
             <div class="profile-user-settings">
 
-                <h1 class="profile-user-name">{{user_profile.username}}</h1>
-                {% if user_profile == current_profile %}
+                <h1 class="profile-user-name">{{user_object.username}}</h1>
+                {% if user_object == current_user %}
                 <a href="/settings" class="btn profile-edit-btn">Account Settings</a>
                 {% endif %}
 
@@ -520,7 +523,7 @@
             <div class="profile-bio">
 
                 <p style="width: 300px; word-wrap: break-word;">
-                    <span class="profile-real-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</span><br>
+                    <span class="profile-real-name">{{ user_object.first_name }} {{ user_object.last_name }}</span><br>
                     {{ user_profile.bio }}
                 </p>
 
