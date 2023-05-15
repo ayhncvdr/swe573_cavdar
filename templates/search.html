@@ -892,6 +892,14 @@
             text-decoration: none;
             color: inherit;
         }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input[type="text"] {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
@@ -901,6 +909,14 @@
             <a href="/" class="navbar-brand"
                 style="font-style: italic; font-weight: bold; font-size: large; text-decoration: none;">
                 Memorycloud</a>
+                <ul class="nav navbar-left">
+                    <form action="{% url 'search' %}" method="GET" style="width: min-content;">
+                        <div class="search-container" style="width: min-content;">
+                            <input type="text" name="query" placeholder="Search for user and story..." style="width: 300px;" required>
+                            <button type="submit"><i class="fa fa-search fa-1x"></i></button>
+                        </div>
+                    </form>                
+                </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/discover">Discover</a></li>
                 <li><a href="/profile/{{user_profile.username}}">My Profile</a></li>
