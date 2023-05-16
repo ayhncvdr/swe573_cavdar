@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'core',
-    'leaflet'
+    'leaflet',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [

@@ -438,6 +438,7 @@
                 }
             }
         }
+
         .search-container {
             display: flex;
             align-items: center;
@@ -457,14 +458,16 @@
             <a href="/" class="navbar-brand"
                 style="font-style: italic; font-weight: bold; font-size: large; text-decoration: none;">
                 Memorycloud</a>
-                <ul class="nav navbar-left">
-                    <form action="{% url 'search' %}" method="GET" style="width: min-content;">
-                        <div class="search-container" style="width: min-content;">
-                            <input type="text" name="query" placeholder="Search for user and story..." style="width: 300px;" required>
-                            <button type="submit" style="border: none; background: none;"><i class="fa fa-search"></i></button>
-                        </div>
-                    </form>
-                </ul>                
+            <ul class="nav navbar-left">
+                <form action="{% url 'search' %}" method="GET" style="width: min-content;">
+                    <div class="search-container" style="width: min-content;">
+                        <input type="text" name="query" placeholder="Search for user and story..." style="width: 300px;"
+                            required>
+                        <button type="submit" style="border: none; background: none;"><i
+                                class="fa fa-search"></i></button>
+                    </div>
+                </form>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/discover">Discover</a></li>
                 <li><a href="/profile/{{user_profile.username}}">My Profile</a></li>
@@ -472,10 +475,12 @@
 
                 <li class="nav-profile">
                     <a href="">
-                        {% if user_profile.profile_image.url %} 
-                        <img src="{{ user_profile.profile_image.url }}" class="profile-image" style="height:25px ; width: 25px;">
+                        {% if user_profile.profile_image.url %}
+                        <img src="{{ user_profile.profile_image.url }}" class="profile-image"
+                            style="height:25px ; width: 25px;">
                         {% else %}
-                        <img src="/media/blank-profile-picture.png" class="profile-image" style="height:25px ; width: 25px;">
+                        <img src="/media/blank-profile-picture.png" class="profile-image"
+                            style="height:25px ; width: 25px;">
                         {% endif %}
                     </a>
                     <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
@@ -498,6 +503,7 @@
                     onkeydown="return event.key != 'Enter';">
 
                     {% csrf_token %}
+
                     <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
                         <div class="col-span-2">
                             <style>
@@ -512,7 +518,7 @@
 
 
                         <div class="col-span-2">
-                            <label for="">Title</label>
+                            <label for="">Title:</label>
                             <input type="text" name="title" placeholder="Title" value=""
                                 class="shadow-none bg-gray-100">
                         </div>
@@ -587,13 +593,13 @@
                         </script>
 
                         <div class="col-span-2">
-                            <label for="tags">Tags</label>
+                            <label for="tags">Tags:</label>
                             <input type="text" id="tags" name='tags' value='' placeholder="Add tags" />
                             <ul id="tags-list"></ul>
                         </div>
 
                         <div class="col-span-2">
-                            <label for="">Files</label>
+                            <label for="">Files:</label>
                             <!-- <img width="100" height="100" src="" /> -->
                             <input type="file" name="files" value="" accept="image/*" multiple
                                 class="shadow-none bg-gray-100 mt-3">
@@ -607,7 +613,7 @@
 
 
                         <div class="col-span-2">
-                            <label for="">Location</label>
+                            <label for="">Location:</label>
                             <div id="map" style="height: 500px;">
                                 <script>
                                     var map = L.map('map').setView([0, 0], 1);
@@ -756,11 +762,13 @@
 
                             </div>
                         </div>
+
                         <div class="col-span-2">
-                            <label for="about">Content</label>
-                            <textarea id="content" name="content" rows="20" class="shadow-none bg-gray-100"></textarea>
+                            {{form.media}}
+                            {{form.as_p}}
                         </div>
                     </div>
+
 
                     <div class="bg-gray-10 p-6 pt-0 flex justify-end space-x-3">
                         <button class="p-2 px-4 rounded bg-gray-50 text-red-500"> <a href="/">Cancel</a> </button>

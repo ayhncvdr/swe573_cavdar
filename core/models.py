@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 import uuid
 from datetime import datetime
 from django.contrib.gis.db import models
+from ckeditor.fields import RichTextField
 
 User = get_user_model()
 
@@ -62,7 +63,7 @@ class Story(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = RichTextField(blank=True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
     date_format = models.IntegerField(choices=DATE_FORMAT_CHOICES, default=1)
     date_exact = models.DateField(null=True, blank=True)

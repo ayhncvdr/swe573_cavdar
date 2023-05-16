@@ -12,6 +12,7 @@ from .models import File, Profile, Story, Tag, Like, Comment, Follower
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 from opencage.geocoder import OpenCageGeocode
+from .forms import StoryForm
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -68,7 +69,7 @@ def discover(request):
     following_posts = Story.objects.filter(user__in=following_users)
 
     # Get all other stories except your posts and the following posts
-    stories = Story.objects.exclude(user=user_object).exclude(user__in=following_users)
+    stories = Story.objects.exclude(user=user_object).exclude(user__in=following_users).order_by('-created_at')
 
     # Create a list to store tuples of story and profile
     story_profile_list = []
@@ -459,6 +460,7 @@ def settings(request):
 
 @login_required(login_url='signin')
 def newPost(request):
+    form = StoryForm()
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
     DATE_FORMAT_MAPPING = {
@@ -469,6 +471,7 @@ def newPost(request):
 
     if request.method == 'POST':
         user = request.user
+        form = StoryForm(request.POST)
         title = request.POST['title']
         content = request.POST['content']
         date_option = request.POST['date_option']
@@ -627,5 +630,10 @@ def newPost(request):
         story.files.set(file_objs)
         print(story)
         return redirect('index')
+    
+    context={
+        'form':form,
+        'user_profile':user_profile
+    }
 
-    return render(request, 'newpost.html', {'user_profile': user_profile})
+    return render(request, 'newpost.html', context=context)

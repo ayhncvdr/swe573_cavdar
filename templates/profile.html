@@ -498,22 +498,22 @@
                     <li><span class="profile-stat-count">{{user_posts_length}}</span> posts</li>
             
                     {% if user_followers_count == 0 %}
-                    <li><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
+                    <li ><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
                     {% elif user_followers_count == 1 %}
                     <a href="/usersfollowers?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
-                        <li><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
+                        <li style="margin-left: 35px;"><span class="profile-stat-count">{{user_followers_count}}</span> follower</li>
                     </a>
                     {% else %}
                     <a href="/usersfollowers?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
-                        <li><span class="profile-stat-count">{{user_followers_count}}</span> followers</li>
+                        <li style="margin-left: 35px;"><span class="profile-stat-count">{{user_followers_count}}</span> followers</li>
                     </a>
                     {% endif %}
             
                     {% if user_following_count == 0 %}
-                    <li style="margin-left: 30px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
+                    <li style="margin-left: 35px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
                     {% else %}
                     <a href="/usersfollowing?user_name={{user_object.username}}" class="link-no-underline link-no-hover">
-                        <li style="margin-left: 30px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
+                        <li style="margin-left: 35px;"><span class="profile-stat-count">{{user_following_count}}</span> following</li>
                     </a>
                     {% endif %}
                 </ul>
@@ -644,8 +644,8 @@
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
                                 <p style="word-break: break-all; white-space: normal;">
-                                    <span style="font-weight: 600;">Content:</span>
-                                    {{ story.content|truncatechars:500 }}
+                                    
+                                    {{ story.content|safe }}
                                 </p>
                             </div>
                         </div>

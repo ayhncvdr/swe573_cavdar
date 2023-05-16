@@ -1057,8 +1057,8 @@
                                 <div class="flex justify-between items-center px-4 py-1">
                                     <div class="flex flex-1 items-center space-x-4">
                                         <p style="word-break: break-all; white-space: normal;">
-                                            <span style="font-weight: 600;">Content:</span>
-                                            {{ story.content|truncatechars:500 }}
+                                            
+                                            {{ story.content|safe}}
                                         </p>
                                     </div>
                                 </div>
