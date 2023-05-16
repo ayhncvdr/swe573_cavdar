@@ -430,6 +430,10 @@
         .search-container input[type="text"] {
             margin-right: 10px;
         }
+
+        .content-container p {
+        margin: 0 0 1em; 
+        }
     </style>
     <title>Profile - {{user_profile.user.username}}</title>
 
@@ -643,10 +647,12 @@
                         style="text-decoration: none; color: inherit;">
                         <div class="flex justify-between items-center px-4 py-1">
                             <div class="flex flex-1 items-center space-x-4">
-                                <p style="word-break: break-all; white-space: normal;">
+                                
                                     
-                                    {{ story.content|safe }}
-                                </p>
+                                <div class="content-container">
+                                    {{ story.content |safe }}
+                                </div>
+                                
                             </div>
                         </div>
                     </a>

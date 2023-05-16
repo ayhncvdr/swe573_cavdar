@@ -438,6 +438,10 @@
         .search-container input[type="text"] {
             margin-right: 10px;
         }
+
+        .content-container p {
+            margin: 0 0 1em; 
+        }
     </style>
 
 </head>
@@ -682,7 +686,9 @@
                     <div class="flex flex-1 items-center space-x-4">
                        
                             
-                            {{ story.content|safe}}
+                        <div class="content-container">
+                            {{ story.content |safe }}
+                        </div>
                         
                     </div>
                 </div>

@@ -442,6 +442,10 @@
             margin-right: 10px;
         }
 
+        .content-container p {
+            margin: 0 0 1em; 
+        }
+
     </style>
 
 </head>
@@ -579,7 +583,9 @@
                             <div class="flex flex-1 items-center space-x-4">
                                 <p style="word-break: break-all; white-space: normal;">
                                     
-                                    {{ story.content |safe}}
+                                    <div class="content-container">
+                                        {{ story.content |safe }}
+                                    </div>
                                 </p>
                             </div>
                         </div>
