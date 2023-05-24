@@ -10,12 +10,11 @@ User = get_user_model()
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    id_user = models.IntegerField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100, default="")
-    last_name = models.CharField(max_length=100,  default="")
-    username = models.CharField(max_length=50, unique=True, default="")
-    email = models.EmailField(unique=True, default="")
+    last_name = models.CharField(max_length=100, default="")
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(unique=True)
     password = models.CharField(max_length=128, default="")
     profile_image = models.ImageField(
         upload_to='profile_images', default='blank-profile-picture.png')
@@ -64,21 +63,20 @@ class Story(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    content = RichTextField(blank=True, null= True)
+    content = RichTextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     date_format = models.IntegerField(choices=DATE_FORMAT_CHOICES, default=1)
     date_exact = models.DateField(null=True, blank=True)
     date_range_start = models.DateField(null=True, blank=True)
     date_range_end = models.DateField(null=True, blank=True)
     decade = models.CharField(max_length=100, null=True, blank=True)
-    exact_date_and_time= models.DateTimeField(null=True, blank=True)
+    exact_date_and_time = models.DateTimeField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     locations = models.ManyToManyField(Location)
     files = models.ManyToManyField(File, blank=True)
     no_of_likes = models.IntegerField(default=0)
     is_liked_by_current_user = models.BooleanField(default=False)
     no_of_comments = models.IntegerField(default=0)
-
 
     def __str__(self):
         return self.title

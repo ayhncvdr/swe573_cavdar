@@ -14,6 +14,7 @@ from .models import Location
 from opencage.geocoder import OpenCageGeocode
 from .forms import StoryForm
 from datetime import datetime
+from django.test import TestCase, Client
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,10 +29,12 @@ def index(request):
     user_profile = Profile.objects.get(user=user_object)
 
     # Get the users you are following
-    following_users = Follower.objects.filter(follower=user_object).values_list('user', flat=True)
+    following_users = Follower.objects.filter(
+        follower=user_object).values_list('user', flat=True)
 
     # Get the stories of the following users
-    stories = Story.objects.filter(user__in=following_users).order_by('-created_at')
+    stories = Story.objects.filter(
+        user__in=following_users).order_by('-created_at')
 
     # Create a list to store tuples of story and profile
     story_profile_list = []
@@ -55,6 +58,7 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+
 @login_required(login_url='signin')
 def discover(request):
     user_object = User.objects.get(username=request.user.username)
@@ -64,13 +68,15 @@ def discover(request):
     your_posts = Story.objects.filter(user=user_object)
 
     # Get the users you are following
-    following_users = Follower.objects.filter(follower=user_object).values_list('user', flat=True)
+    following_users = Follower.objects.filter(
+        follower=user_object).values_list('user', flat=True)
 
     # Get the stories of the users you are following
     following_posts = Story.objects.filter(user__in=following_users)
 
     # Get all other stories except your posts and the following posts
-    stories = Story.objects.exclude(user=user_object).exclude(user__in=following_users).order_by('-created_at')
+    stories = Story.objects.exclude(user=user_object).exclude(
+        user__in=following_users).order_by('-created_at')
 
     # Create a list to store tuples of story and profile
     story_profile_list = []
@@ -93,6 +99,7 @@ def discover(request):
         'user_object': user_object
     }
     return render(request, 'discover.html', context)
+
 
 @login_required(login_url='signin')
 def search(request):
@@ -131,7 +138,8 @@ def search(request):
             Q(date_exact__gte=decade_start, date_exact__lt=decade_end) |
             Q(date_range_start__gte=decade_start, date_range_start__lt=decade_end) |
             Q(date_range_end__gte=decade_start, date_range_end__lt=decade_end) |
-            Q(exact_date_and_time__gte=decade_start, exact_date_and_time__lt=decade_end)
+            Q(exact_date_and_time__gte=decade_start,
+              exact_date_and_time__lt=decade_end)
         )
 
     stories = Story.objects.filter(story_query).distinct()
@@ -145,11 +153,10 @@ def search(request):
 
         story_profile_list.append((story, user_story_profile))
 
-
     context = {
         'query': query,
         'profiles': profiles,
-        'stories': stories, 
+        'stories': stories,
         'user_profile': user_profile,
         'user_object': user_object,
         'story_profile_list': story_profile_list
@@ -219,6 +226,7 @@ def profile(request, pk):
         'user_following_count': user_following_count,
     }
     return render(request, 'profile.html', context)
+
 
 @login_required(login_url='signin')
 def usersFollowers(request):
@@ -404,7 +412,7 @@ def signup(request):
 
                 # create a profile object for the new user
                 user_model = User.objects.get(username=username)
-                new_profile = Profile.objects.create(user=user_model, id_user=user_model.id, first_name=user_model.first_name,
+                new_profile = Profile.objects.create(user=user_model, first_name=user_model.first_name,
                                                      last_name=user_model.last_name, username=user_model.username, email=user_model.email, password=user_model.password)
                 new_profile.save()
                 # TODO redirect setting page later
@@ -572,9 +580,8 @@ def newPost(request):
             date_exact = None
             date_range_start = None
             date_range_end = None
-            decade = None 
+            decade = None
             exact_date_and_time = request.POST.get('exact_date_and_time', None)
-        
 
         # Validation checks
         if not content:
@@ -661,10 +668,10 @@ def newPost(request):
         story.files.set(file_objs)
         print(story)
         return redirect('index')
-    
-    context={
-        'form':form,
-        'user_profile':user_profile
+
+    context = {
+        'form': form,
+        'user_profile': user_profile
     }
 
     return render(request, 'newpost.html', context=context)
