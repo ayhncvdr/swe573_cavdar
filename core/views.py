@@ -13,6 +13,7 @@ from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
 from opencage.geocoder import OpenCageGeocode
 from .forms import StoryForm
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -117,8 +118,21 @@ def search(request):
         Q(date_exact__icontains=query) |
         Q(date_range_start__icontains=query) |
         Q(date_range_end__icontains=query) |
-        Q(decade__icontains=query)
+        Q(decade__icontains=query) |
+        Q(exact_date_and_time__icontains=query)
     )
+
+    # Search for stories matching the decade
+    if query.endswith('s') and len(query) == 5 and query[:-1].isdigit():
+        decade = query[:-1]
+        decade_start = datetime.strptime(decade, '%Y')
+        decade_end = datetime.strptime(str(int(decade) + 9), '%Y')
+        story_query |= Q(decade__icontains=decade) | (
+            Q(date_exact__gte=decade_start, date_exact__lt=decade_end) |
+            Q(date_range_start__gte=decade_start, date_range_start__lt=decade_end) |
+            Q(date_range_end__gte=decade_start, date_range_end__lt=decade_end) |
+            Q(exact_date_and_time__gte=decade_start, exact_date_and_time__lt=decade_end)
+        )
 
     stories = Story.objects.filter(story_query).distinct()
     story_profile_list = []
