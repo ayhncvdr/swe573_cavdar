@@ -994,6 +994,8 @@
                                         {{ story.date_range_start }} - {{ story.date_range_end }}
                                         {% elif story.date_format == 3 %}
                                         {{ story.decade }}
+                                        {% elif story.date_format == 4 %}
+                                        {{ story.exact_date_and_time }}
                                         {% endif %}
                                     </p>
                                 </div>

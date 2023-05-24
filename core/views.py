@@ -466,7 +466,8 @@ def newPost(request):
     DATE_FORMAT_MAPPING = {
         'exact_date': 1,
         'date_range': 2,
-        'decade': 3
+        'decade': 3,
+        'exact_date_and_time': 4
     }
 
     if request.method == 'POST':
@@ -539,16 +540,27 @@ def newPost(request):
             date_range_start = None
             date_range_end = None
             decade = None
+            exact_date_and_time = None
         elif date_format == 2:
             date_exact = None
             date_range_start = request.POST.get('start_date', None)
             date_range_end = request.POST.get('end_date', None)
             decade = None
+            exact_date_and_time = None
+
         elif date_format == 3:
             date_exact = None
             date_range_start = None
             date_range_end = None
             decade = request.POST.get('decade', None)
+            exact_date_and_time = None
+        elif date_format == 4:
+            date_exact = None
+            date_range_start = None
+            date_range_end = None
+            decade = None 
+            exact_date_and_time = request.POST.get('exact_date_and_time', None)
+        
 
         # Validation checks
         if not content:
@@ -577,6 +589,10 @@ def newPost(request):
         elif date_format == 3:
             if not decade:
                 messages.error(request, 'Decade is required.')
+                return redirect('newpost')
+        elif date_format == 4:
+            if not exact_date_and_time:
+                messages.error(request, 'Exact date and time is required.')
                 return redirect('newpost')
         else:
             messages.error(request, 'Invalid date option.')
@@ -619,7 +635,8 @@ def newPost(request):
             date_exact=date_exact,
             date_range_start=date_range_start,
             date_range_end=date_range_end,
-            decade=decade
+            decade=decade,
+            exact_date_and_time=exact_date_and_time
         )
 
         print(story)

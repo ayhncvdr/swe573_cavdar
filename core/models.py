@@ -58,6 +58,7 @@ class Story(models.Model):
         (1, 'Exact Date'),
         (2, 'Range of Dates'),
         (3, 'Decade'),
+        (4, 'Exact Date and Time')
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
@@ -70,6 +71,7 @@ class Story(models.Model):
     date_range_start = models.DateField(null=True, blank=True)
     date_range_end = models.DateField(null=True, blank=True)
     decade = models.CharField(max_length=100, null=True, blank=True)
+    exact_date_and_time= models.DateTimeField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     locations = models.ManyToManyField(Location)
     files = models.ManyToManyField(File, blank=True)

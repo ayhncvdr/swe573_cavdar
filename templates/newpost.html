@@ -533,6 +533,7 @@
                                     <option value="exact_date" selected>Exact Date</option>
                                     <option value="date_range">Range of Dates</option>
                                     <option value="decade">Decade</option>
+                                    <option value="exact_date_and_time">Exact Date and Time</option>
                                 </select>
                             </div>
                             <div id="exact_date" class="shadow-none bg-gray-100"
@@ -564,15 +565,23 @@
                                     <option value="2020s">2020s</option>
                                 </select>
                             </div>
+                            <div id="exact_date_and_time" class="shadow-none bg-gray-100" style="display:none; grid-template-columns: auto 1fr; gap:10px ; padding-top: 1%;">
+                                <label>Exact Date and Time:</label>
+                                <input type="datetime-local" name="exact_date_and_time" style="width: min-content; height:75%;">
+                            </div>                            
                         </div>
                         <script>
                             const select = document.getElementById('date_option');
                             const exactDateInput = document.getElementById('exact_date');
                             const dateRangeInput = document.getElementById('date_range');
                             const decadeInput = document.getElementById('decade');
+                            const exactDateAndTimeInput = document.getElementById('exact_date_and_time');
                             if (select.value == "exact_date") {
                                 exactDateInput.style.display
                                     = 'grid';
+                            }
+                            if (select.value == "exact_date_and_time") {
+                                exactDateAndTimeInput.style.display = 'grid';
                             }
 
 
@@ -580,6 +589,7 @@
                                 exactDateInput.style.display = 'none';
                                 dateRangeInput.style.display = 'none';
                                 decadeInput.style.display = 'none';
+                                exactDateAndTimeInput.style.display = 'none';
                                 const selectedOption = select.value;
                                 if (selectedOption === 'exact_date') {
                                     exactDateInput.style.display
@@ -588,6 +598,8 @@
                                     dateRangeInput.style.display = 'grid';
                                 } else if (selectedOption === 'decade') {
                                     decadeInput.style.display = 'grid';
+                                } else if (selectedOption === 'exact_date_and_time') {
+                                    exactDateAndTimeInput.style.display = 'grid';
                                 }
                             });
                         </script>
