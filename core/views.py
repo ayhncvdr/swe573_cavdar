@@ -107,60 +107,74 @@ def search(request):
     user_profile = Profile.objects.get(user=user_object)
     query = request.GET.get('query')
 
-    # Search profiles
-    profile_query = Q(
-        Q(user__username__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query) |
-        Q(bio__icontains=query)
-    )
-    profiles = Profile.objects.filter(profile_query).distinct()
+    # Check if query parameter is provided
+    if query:
+        # Search profiles
+        profile_query = Q(
+            Q(user__username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(bio__icontains=query)
+        )
+        profiles = Profile.objects.filter(profile_query).distinct()
 
-    # Search stories
-    story_query = Q(
-        Q(title__icontains=query) |
-        Q(content__icontains=query) |
-        Q(tags__name__icontains=query) |
-        Q(locations__name__icontains=query) |
-        Q(date_exact__icontains=query) |
-        Q(date_range_start__icontains=query) |
-        Q(date_range_end__icontains=query) |
-        Q(decade__icontains=query) |
-        Q(exact_date_and_time__icontains=query)
-    )
-
-    # Search for stories matching the decade
-    if query.endswith('s') and len(query) == 5 and query[:-1].isdigit():
-        decade = query[:-1]
-        decade_start = datetime.strptime(decade, '%Y')
-        decade_end = datetime.strptime(str(int(decade) + 9), '%Y')
-        story_query |= Q(decade__icontains=decade) | (
-            Q(date_exact__gte=decade_start, date_exact__lt=decade_end) |
-            Q(date_range_start__gte=decade_start, date_range_start__lt=decade_end) |
-            Q(date_range_end__gte=decade_start, date_range_end__lt=decade_end) |
-            Q(exact_date_and_time__gte=decade_start,
-              exact_date_and_time__lt=decade_end)
+        # Search stories
+        story_query = Q(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query) |
+            Q(locations__name__icontains=query) |
+            Q(date_exact__icontains=query) |
+            Q(date_range_start__icontains=query) |
+            Q(date_range_end__icontains=query) |
+            Q(decade__icontains=query) |
+            Q(exact_date_and_time__icontains=query)
         )
 
-    stories = Story.objects.filter(story_query).distinct()
-    story_profile_list = []
-    for story in stories:
-        user_story_object = User.objects.get(username=story.user.username)
-        try:
-            user_story_profile = Profile.objects.get(user=user_story_object)
-        except Profile.DoesNotExist:
-            user_story_profile = None
+        # Search for stories matching the decade
+        if query.endswith('s') and len(query) == 5 and query[:-1].isdigit():
+            decade = query[:-1]
+            decade_start = datetime.strptime(decade, '%Y')
+            decade_end = datetime.strptime(str(int(decade) + 9), '%Y')
+            story_query |= Q(decade__icontains=decade) | (
+                Q(date_exact__gte=decade_start, date_exact__lt=decade_end) |
+                Q(date_range_start__gte=decade_start, date_range_start__lt=decade_end) |
+                Q(date_range_end__gte=decade_start, date_range_end__lt=decade_end) |
+                Q(exact_date_and_time__gte=decade_start,
+                  exact_date_and_time__lt=decade_end)
+            )
 
-        story_profile_list.append((story, user_story_profile))
+        stories = Story.objects.filter(story_query).distinct()
+        story_profile_list = []
+        for story in stories:
+            user_story_object = User.objects.get(username=story.user.username)
+            try:
+                user_story_profile = Profile.objects.get(
+                    user=user_story_object)
+            except Profile.DoesNotExist:
+                user_story_profile = None
 
-    context = {
-        'query': query,
-        'profiles': profiles,
-        'stories': stories,
-        'user_profile': user_profile,
-        'user_object': user_object,
-        'story_profile_list': story_profile_list
-    }
+            story_profile_list.append((story, user_story_profile))
+
+        context = {
+            'query': query,
+            'profiles': profiles,
+            'stories': stories,
+            'user_profile': user_profile,
+            'user_object': user_object,
+            'story_profile_list': story_profile_list
+        }
+    else:
+        # Handle case when query parameter is not provided
+        context = {
+            'query': '',
+            'profiles': [],
+            'stories': [],
+            'user_profile': user_profile,
+            'user_object': user_object,
+            'story_profile_list': []
+        }
+
     return render(request, 'search.html', context)
 
 
