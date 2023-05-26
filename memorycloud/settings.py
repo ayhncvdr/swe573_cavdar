@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from decouple import config
 import os
+import django_heroku
+import dj_database_url
 
 if os.name == 'nt':
     import platform
@@ -37,7 +39,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -150,3 +152,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 GDAL_LIBRARY_PATH = "C:/OSGeo4W/bin/gdal306.dll"
 GEOS_LIBRARY_PATH = "C:/OSGeo4W/bin/geos_c.dll"
+django_heroku.settings(locals())
