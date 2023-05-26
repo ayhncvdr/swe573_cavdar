@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: python /app/manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - localhost
+  localhost:
+    image: postgres:13
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+  
+volumes:
+    potgres_data:

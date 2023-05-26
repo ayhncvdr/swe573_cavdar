@@ -14,15 +14,11 @@ from pathlib import Path
 from decouple import config
 import os
 
-if os.name == 'nt':
-    import platform
-    OSGEO4W = "C:/OSGeo4W"
-    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
-    os.environ['OSGEO4W_ROOT'] = OSGEO4W
-    os.environ['GDAL_DATA'] = "C:/OSGeo4W/apps/gdal"
-    os.environ['PROJ_LIB'] = OSGEO4W + "/share/proj"
-    GDAL_LIBRARY_PATH = "C:/OSGeo4W/bin/gdal306.dll"
-    os.environ['PATH'] = OSGEO4W + "/bin/" + os.environ['PATH']
+OSGEO4W = config('OSGEO4W')
+GDAL_DATA = config('GDAL_DATA')
+PROJ_LIB = config('PROJ_LIB')
+GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +33,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -148,5 +144,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-GDAL_LIBRARY_PATH = "C:/OSGeo4W/bin/gdal306.dll"
-GEOS_LIBRARY_PATH = "C:/OSGeo4W/bin/geos_c.dll"
+
