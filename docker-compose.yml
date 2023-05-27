@@ -1,0 +1,52 @@
+# version: '3.7'
+
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - 80:8000
+#     volumes:
+#       - ./OSGeo4W:/OSGeo4W
+#     depends_on:
+#       - db
+#   db:
+#     image: kartoza/postgis:12.0
+#     ports: 
+#       - 5432:5432
+#     environment:
+#       - POSTGRES_USER=admin
+#       - POSTGRES_PASSWORD=123123
+#       - POSTGRES_DB=db
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+# volumes:
+#   db_data:
+
+
+
+version: '3.7'
+
+services:
+  app:
+    build: .
+    ports:
+      - 80:8000
+    volumes:
+      - .:/app
+    environment:
+      - .env
+    depends_on:
+      - db
+  db:
+    image: kartoza/postgis:12.0
+    ports: 
+      - 5432:5432
+    volumes: 
+      - postgres_data:/var/lib/postgresql
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123123
+      - POSTGRES_DB=db
+
+volumes:
+  postgres_data:
