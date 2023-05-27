@@ -7,3 +7,6 @@ db.sqlite3
 .env
 /static/
 media/
+OSGeo4W/
+OSGeo4W.bat
+OSGeo4W.ico

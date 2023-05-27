@@ -11,14 +11,20 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
 import os
+import django_heroku
+import dj_database_url
 
-OSGEO4W = config('OSGEO4W')
-GDAL_DATA = config('GDAL_DATA')
-PROJ_LIB = config('PROJ_LIB')
-GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
-GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
+if os.name == 'nt':
+    import platform
+    OSGEO4W = "/OSGeo4W"
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = "/OSGeo4W"
+    os.environ['GDAL_DATA'] = "/OSGeo4W/apps/gdal"
+    os.environ['PROJ_LIB'] = "/OSGeo4W/share/proj"
+    GDAL_LIBRARY_PATH = "OSGeo4W/bin/gdal307.dll"
+    os.environ['PATH'] = "/OSGeo4W/bin/"
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,10 +34,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = 204136262359
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -89,11 +95,11 @@ WSGI_APPLICATION = 'memorycloud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'NAME': 'memorycloud',
+        'USER': 'admin',
+        'PASSWORD': '123123',
+        'HOST': "localhost",
+        'PORT': '5432',
     }
 }
 
@@ -135,6 +141,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+django_heroku.settings(locals())
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -145,3 +152,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+GDAL_LIBRARY_PATH = "/OSGeo4W/bin/gdal307.dll"
+GEOS_LIBRARY_PATH = "/OSGeo4W/bin/geos_c.dll"

@@ -8,6 +8,7 @@ services:
       - 8000:8000
     volumes:
       - .:/app
+      - ./OSGeo4W:/OSGeo4W
     depends_on:
       - localhost
   localhost:
