@@ -16,13 +16,16 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY OSGeo4W/bin/gdal307.dll /OSGeo4W/bin/gdal307.dll
-
 # Copy the application code
-COPY . .
+COPY  manage.py .
+COPY  core/ ./core 
+COPY  static/ ./static 
+COPY  templates/ ./templates 
+COPY  memorycloud/ ./memorycloud 
+EXPOSE 8000
 
 # Start the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
 
 # Use a base image with Conda pre-installed
 # FROM continuumio/miniconda3

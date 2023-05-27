@@ -1,20 +1,52 @@
-version: '3'
+# version: '3.7'
+
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - 80:8000
+#     volumes:
+#       - ./OSGeo4W:/OSGeo4W
+#     depends_on:
+#       - db
+#   db:
+#     image: kartoza/postgis:12.0
+#     ports: 
+#       - 5432:5432
+#     environment:
+#       - POSTGRES_USER=admin
+#       - POSTGRES_PASSWORD=123123
+#       - POSTGRES_DB=db
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+# volumes:
+#   db_data:
+
+
+
+version: '3.7'
 
 services:
-  web:
+  app:
     build: .
-    command: python /app/manage.py runserver 0.0.0.0:8000
     ports:
-      - 8000:8000
+      - 80:8000
     volumes:
       - .:/app
-      - ./OSGeo4W:/OSGeo4W
-    depends_on:
-      - localhost
-  localhost:
-    image: postgres:13
     environment:
-      - "POSTGRES_HOST_AUTH_METHOD=trust"
-  
+      - .env
+    depends_on:
+      - db
+  db:
+    image: kartoza/postgis:12.0
+    ports: 
+      - 5432:5432
+    volumes: 
+      - postgres_data:/var/lib/postgresql
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123123
+      - POSTGRES_DB=db
+
 volumes:
-    potgres_data:
+  postgres_data:
