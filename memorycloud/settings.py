@@ -38,9 +38,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['localhost', '34.77.211.252']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '34.77.211.252']
 
 
 # Application definition
@@ -95,12 +95,12 @@ WSGI_APPLICATION = 'memorycloud.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',    
+        'NAME': os.getenv('POSTGRES_DBNAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASS'),
+        'HOST': os.getenv('PG_HOST'),
+        'PORT': os.getenv('PG_PORT'),
     }
 }
 
@@ -151,4 +151,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-GDAL_LIBRARY_PATH = "/usr/lib/libgdal.so.28"
+GDAL_LIBRARY_PATH = "/usr/lib/libgdal.so.20"

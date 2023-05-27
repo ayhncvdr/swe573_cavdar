@@ -24,29 +24,69 @@
 
 
 
+# version: '3.7'
+
+# services:
+#   app:
+#     build: .
+#     ports:
+#       - 80:8000
+#     volumes:
+#       - .:/app
+#     environment:
+#       - .env
+#     depends_on:
+#       - db
+#   db:
+#     image: kartoza/postgis:12.0
+#     ports: 
+#       - 5432:5432
+#     volumes: 
+#       - postgres_data:/var/lib/postgresql
+#     environment: 
+#       - POSTGRES_USER=admin
+#       - POSTGRES_PASSWORD=123123
+#       - POSTGRES_DB=db
+
+# volumes:
+#   postgres_data:
+
 version: '3.7'
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 80:8000
+      - 8000:8000
     volumes:
       - .:/app
-    environment:
+    env_file:
       - .env
+    restart: "on-failure"
     depends_on:
-      - db
-  db:
-    image: kartoza/postgis:12.0
-    ports: 
-      - 5432:5432
-    volumes: 
-      - postgres_data:/var/lib/postgresql
-    environment: 
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=123123
-      - POSTGRES_DB=db
+      - postgres-db
+    networks:
+      - storyteller
+    
+  postgres-db:
+      image: kartoza/postgis:12.0
+      ports: 
+        - 5432:5432
+      volumes: 
+        - postgres_data:/var/lib/postgresql
+      environment: 
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASS=${POSTGRES_PASS}
+        - POSTGRES_DBNAME=${POSTGRES_DBNAME}
+      restart : "on-failure"
+      networks: 
+        - storyteller
+
+networks:
+  storyteller:
+    driver: bridge
 
 volumes:
   postgres_data:

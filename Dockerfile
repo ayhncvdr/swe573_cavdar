@@ -1,5 +1,5 @@
 #Use the official Python base image
-FROM python:3.10.5
+FROM python:3.9.2-slim-buster
 
 ENV PYTHONDONTWRITEBYTECODE 1 
 ENV PYTHONBUFFERED 1
@@ -22,7 +22,6 @@ COPY  core/ ./core
 COPY  static/ ./static 
 COPY  templates/ ./templates 
 COPY  memorycloud/ ./memorycloud 
-EXPOSE 8000
 
 # Start the Django development server
 CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
