@@ -11,16 +11,21 @@ from django.contrib.auth.decorators import login_required
 from .models import File, Profile, Story, Tag, Like, Comment, Follower
 from django.contrib.gis.geos import Point, Polygon, LineString
 from .models import Location
-from opencage.geocoder import OpenCageGeocode
 from .forms import StoryForm
 from datetime import datetime
 from django.test import TestCase, Client
 from dotenv import load_dotenv
+from geopy.geocoders import Nominatim
 
 load_dotenv()
-opencage_api_key = os.environ.get("OPENCAGE_API_KEY")
-geocoder = OpenCageGeocode(opencage_api_key)
+
 # Create your views here.
+
+def reverse_geocode_nominatim(lat, lon):
+    geolocator = Nominatim(user_agent="my_app")
+    location = geolocator.reverse(f"{lat}, {lon}")
+    print(location)
+    return location
 
 
 @login_required(login_url='signin')
@@ -524,7 +529,6 @@ def newPost(request):
         else:
             feature_data = []
 
-        print(feature_data)
         locations = []
         for feature in feature_data:
             if feature.get('geometry'):
@@ -533,41 +537,36 @@ def newPost(request):
 
                 if location_type == 'Point':
                     point = Point(coordinates)
-                    results = geocoder.reverse_geocode(point.y, point.x)
-                    location_name = results[0]['formatted']
-                    location_name = location_name.replace("unnamed road,", "")
-                    print(location_name)
+                    results = reverse_geocode_nominatim(point.y, point.x)
+                    location_name = results
+                    
                     radius = feature.get('properties', {}).get('radius')
                     if radius:
                         location = Location(
-                            name="Circle Area in " + location_name, point=point)
+                            name="Circle Area in " + str(location_name), point=point)
                         location.radius = float(radius)
                     else:
-                        location = Location(name=location_name, point=point)
+                        location = Location(name=str(location_name), point=point)
 
                 elif location_type == 'Polygon':
                     polygon = Polygon(coordinates[0])
                     centroid = polygon.centroid
-                    results = geocoder.reverse_geocode(centroid.y, centroid.x)
-                    location_name = results[0]['formatted']
-                    location_name = location_name.replace("unnamed road,", "")
-                    print(location_name)
+                    results =  reverse_geocode_nominatim(centroid.y, centroid.x)
+                    location_name = results
+                    
                     location = Location(
-                        name="Area Around "+location_name, area=polygon)
+                        name="Area Around "+str(location_name), area=polygon)
 
                 elif location_type == 'LineString':
                     linestring = LineString(coordinates)
                     midpoint = linestring.interpolate(linestring.length/2)
-                    results = geocoder.reverse_geocode(midpoint.y, midpoint.x)
-                    location_name = results[0]['formatted']
-                    location_name = location_name.replace("unnamed road,", "")
-                    print(location_name)
+                    results = reverse_geocode_nominatim(midpoint.y, midpoint.x)
+                    location_name = results
                     location = Location(
-                        name="Lines Around "+location_name, lines=linestring)
+                        name="Lines Around "+str(location_name), lines=linestring)
 
                 if location:
                     locations.append(location)
-        print(locations)
 
         # date
         date_format = DATE_FORMAT_MAPPING[date_option]
@@ -647,8 +646,7 @@ def newPost(request):
             file_obj = File(file=file)
             file_objs.append(file_obj)
 
-        print(file_objs)
-        print(tag_objs)
+
 
         # Save all the Location objects to the database
         for location in locations:
@@ -674,13 +672,11 @@ def newPost(request):
             exact_date_and_time=exact_date_and_time
         )
 
-        print(story)
         # Save the story object to the database
         story.save()
         story.locations.set(locations)
         story.tags.set(tag_objs)
         story.files.set(file_objs)
-        print(story)
         return redirect('index')
 
     context = {
